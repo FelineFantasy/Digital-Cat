@@ -23,7 +23,7 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Проверяем, что игра запускается
-      run: |
-        timeout 5s python Digital_Cat.py || [[ $? -eq 124 ]]
+    - name: Проверяем, что игра запускается (Эмуляция игрока)
       shell: bash
+      run: |
+        echo "FelineFantasy" | timeout 10s python Digital_Cat.py
