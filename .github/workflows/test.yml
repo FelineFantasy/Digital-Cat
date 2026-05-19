@@ -7,23 +7,41 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  syntax-check:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-
     runs-on: ${{ matrix.os }}
-
     steps:
     - name: Скачиваем код
       uses: actions/checkout@v4
-
     - name: Устанавливаем Python 3.11
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
-
-    - name: Проверяем, что Python-файл валидный (без запуска игры)
+    - name: Проверяем, что Python-файл валидный
       shell: bash
       run: |
         python -m py_compile Digital_Cat.py && echo "OK: синтаксис корректен"
+
+  build-exe:
+    needs: syntax-check
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v4
+    - name: Устанавливаем Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    - name: Устанавливаем PyInstaller
+      run: pip install pyinstaller
+    - name: Собираем бинарник
+      run: pyinstaller --onefile --name Digital_Cat_${{ matrix.os }} Digital_Cat.py
+    - name: Загружаем результат (артефакт)
+      uses: actions/upload-artifact@v4
+      with:
+        name: Digital_Cat_${{ matrix.os }}
+        path: dist/
