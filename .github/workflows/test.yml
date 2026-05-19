@@ -56,6 +56,7 @@ jobs:
     - name: Загружаем результат в Релиз
       uses: softprops/action-gh-release@v2
       with:
-        files: dist/Digital_Cat_${{ matrix.os }}
+        tag_name: nightly
+        files: dist/Digital_Cat_${{ matrix.os }}*
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
