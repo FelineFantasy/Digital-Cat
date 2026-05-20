@@ -48,9 +48,11 @@ jobs:
       shell: bash
       run: |
         if [ "${{ matrix.os }}" = "windows-latest" ]; then
-          pyinstaller --onefile --name "Digital_Cat_${{ matrix.os }}.exe" Digital_Cat.py
+          pyinstaller --onefile --name "Digital_Cat_Windows" Digital_Cat.py
+        elif [ "${{ matrix.os }}" = "macos-latest" ]; then
+          pyinstaller --onefile --name "Digital_Cat_macOS" Digital_Cat.py
         else
-          pyinstaller --onefile --name "Digital_Cat_${{ matrix.os }}" Digital_Cat.py
+          pyinstaller --onefile --name "Digital_Cat_Linux" Digital_Cat.py
         fi
       
     - name: Загружаем результат в Релиз
