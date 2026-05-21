@@ -12,8 +12,27 @@ import time
 import zlib
 from typing import TypedDict
 
-SAVE_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "save.dat")
-LOG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "log.txt")
+def get_base_dir():
+    """Возвращает базовую директорию для сохранения файлов."""
+    if getattr(sys, 'frozen', False):
+        return os.path.dirname(sys.executable)
+    else:
+        return os.path.dirname(os.path.abspath(__file__))
+
+def get_save_path():
+    """Возвращает путь к файлу сохранения."""
+    base_dir = get_base_dir()
+    os.makedirs(base_dir, exist_ok=True)
+    return os.path.join(base_dir, "save.dat")
+
+def get_log_path():
+    """Возвращает путь к лог-файлу."""
+    base_dir = get_base_dir()
+    os.makedirs(base_dir, exist_ok=True)
+    return os.path.join(base_dir, "log.txt")
+
+SAVE_FILE = get_save_path()
+LOG_FILE = get_log_path()
 
 PHASES = {
     "утро": "день",
@@ -24,7 +43,7 @@ PHASES = {
 
 screen_clear_delay = 1.5
 
-VERSION = "v3.0.0"
+VERSION = "v3.0.1"
 AUTHOR = "Тимур (FelineFantasy)"
 LICENSE = "MIT"
 
@@ -101,26 +120,30 @@ def _deobfuscate(data: bytes) -> bytes:
 
 def save_game(cat: CatState):
     """Сохраняет игру в файл."""
-    json_data = json.dumps(
-        cat, ensure_ascii=False, indent=2, separators=(',', ': ')
-    )
-    obfuscated = _obfuscate(json_data.encode('utf-8'))
-    with open(SAVE_FILE, "wb") as f:
-        f.write(obfuscated)
-    log_to_file("DEBUG", f"Игра сохранена: день={cat['day']}, имя={cat['name']}")
+    try:
+        os.makedirs(os.path.dirname(SAVE_FILE), exist_ok=True)
+        json_data = json.dumps(
+            cat, ensure_ascii=False, indent=2, separators=(',', ': ')
+        )
+        obfuscated = _obfuscate(json_data.encode('utf-8'))
+        with open(SAVE_FILE, "wb") as f:
+            f.write(obfuscated)
+        log_to_file("DEBUG", f"Игра сохранена: день={cat['day']}, имя={cat['name']}, путь={SAVE_FILE}")
+    except Exception as e:
+        log_to_file("ERROR", f"Ошибка сохранения: {e}")
 
 
 def load_game() -> CatState | None:
     """Загружает игру из файла."""
     if not os.path.exists(SAVE_FILE):
-        log_to_file("DEBUG", "Файл сохранения не найден")
+        log_to_file("DEBUG", f"Файл сохранения не найден: {SAVE_FILE}")
         return None
-    with open(SAVE_FILE, "rb") as f:
-        obfuscated = f.read()
     try:
+        with open(SAVE_FILE, "rb") as f:
+            obfuscated = f.read()
         json_data = _deobfuscate(obfuscated)
         cat = json.loads(json_data.decode('utf-8'))
-        log_to_file("DEBUG", f"Игра загружена: день={cat['day']}, имя={cat['name']}")
+        log_to_file("DEBUG", f"Игра загружена: день={cat['day']}, имя={cat['name']}, путь={SAVE_FILE}")
         return cat
     except Exception as e:
         print(f"Ошибка загрузки сохранения: {e}")
@@ -666,8 +689,8 @@ def action_settings(cat: CatState):
             case 2:
                 if os.path.exists(SAVE_FILE):
                     os.remove(SAVE_FILE)
-                    log_to_file("WARNING", "Сохранение игры удалено!")
-                    print("Сохранение игры удалёны!")
+                    log_to_file("WARNING", f"Сохранение игры удалено! Путь: {SAVE_FILE}")
+                    print("Сохранение игры удалено!")
                     print("Завершение работы...")
                     time.sleep(3)
                     sys.exit()
@@ -713,8 +736,18 @@ def show_welcome_screen():
 
 def main():
     """Основная функция игры."""
+    # Очищаем лог-файл при запуске
+    try:
+        os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
+        with open(LOG_FILE, "w", encoding="utf-8") as f:
+            f.write("")
+    except Exception:
+        pass
+
     log_to_file("INFO", "=" * 50)
     log_to_file("INFO", "ИГРА ЗАПУЩЕНА")
+    log_to_file("INFO", f"Путь к сохранениям: {SAVE_FILE}")
+    log_to_file("INFO", f"Путь к логам: {LOG_FILE}")
     log_to_file("INFO", "=" * 50)
 
     cat: CatState = {
@@ -784,7 +817,7 @@ def main():
         print("\n" + "=" * 50)
         show_menu()
 
-        user_choice = input("Выберите действие от 0 до 10: ").strip()
+        user_choice = input("Выберите действие от 0 до 11: ").strip()
 
         match user_choice:
             case "0":
@@ -835,7 +868,7 @@ def main():
 
     if os.path.exists(SAVE_FILE):
         os.remove(SAVE_FILE)
-        log_to_file("INFO", "Файл сохранения удалён при завершении игры")
+        log_to_file("INFO", f"Файл сохранения удалён при завершении игры: {SAVE_FILE}")
 
     print("Игра окончена!")
     log_to_file("INFO", "ИГРА ОКОНЧЕНА (полностью)")
@@ -843,6 +876,4 @@ def main():
 
 
 if __name__ == "__main__":
-    with open(LOG_FILE, "w") as f:
-        f.write("")
     main()
