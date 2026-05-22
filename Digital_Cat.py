@@ -805,80 +805,88 @@ def main():
         log_to_file("INFO", f"Создан новый кот с именем: {cat['name']}")
         clear_console()
 
-    while cat["is_alive"]:
-        random_event(cat)
-        apply_clamp(cat)
+    try:
+        while cat["is_alive"]:
+            random_event(cat)
+            apply_clamp(cat)
 
-        if is_dead(cat):
-            print("=" * 50)
-            print(f"{cat['name']} умер...")
-            print(f"Игра длилась {cat['day']} дней")
-            log_to_file("WARNING", f"ИГРА ОКОНЧЕНА: кот умер на {cat['day']} дне")
-            time.sleep(2)
-            break
-
-        if cat["day"] >= 100:
-            print("=" * 50)
-            print("ПОЗДРАВЛЯЮ! ТЫ ПРОШЁЛ ИГРУ!")
-            print("=" * 50)
-            log_to_file("INFO", f"ИГРА ПРОЙДЕНА! День {cat['day']}, имя {cat['name']}")
-            cat["is_alive"] = False
-            save_game(cat)
-            time.sleep(2)
-            break
-
-        show_welcome_screen()
-        print("\n" + "=" * 50)
-        show_menu()
-
-        user_choice = input("Выберите действие от 0 до 11: ").strip()
-
-        match user_choice:
-            case "0":
+            if is_dead(cat):
                 print("=" * 50)
+                print(f"{cat['name']} умер...")
+                print(f"Игра длилась {cat['day']} дней")
+                log_to_file("WARNING", f"ИГРА ОКОНЧЕНА: кот умер на {cat['day']} дне")
+                time.sleep(2)
+                break
+
+            if cat["day"] >= 100:
+                print("=" * 50)
+                print("ПОЗДРАВЛЯЮ! ТЫ ПРОШЁЛ ИГРУ!")
+                print("=" * 50)
+                log_to_file("INFO", f"ИГРА ПРОЙДЕНА! День {cat['day']}, имя {cat['name']}")
+                cat["is_alive"] = False
                 save_game(cat)
-                log_to_file("INFO", "Игра завершена пользователем (выход из меню)")
-                print("До встречи!")
-                return
-            case "1":
-                action_feed(cat)
-            case "2":
-                action_pet(cat)
-            case "3":
-                action_play(cat)
-            case "4":
-                action_clean(cat)
-            case "5":
-                action_sleep(cat)
-            case "6":
-                action_shop(cat)
-            case "7":
-                action_outside(cat)
-            case "8":
-                action_work(cat)
-            case "9":
-                action_vet(cat)
-            case "10":
-                action_stats(cat)
-            case "11":
-                action_settings(cat)
-            case _:
+                time.sleep(2)
+                break
+
+            show_welcome_screen()
+            print("\n" + "=" * 50)
+            show_menu()
+
+            user_choice = input("Выберите действие от 0 до 11: ").strip()
+
+            match user_choice:
+                case "0":
+                    print("=" * 50)
+                    save_game(cat)
+                    log_to_file("INFO", "Игра завершена пользователем (выход из меню)")
+                    print("До встречи!")
+                    return
+                case "1":
+                    action_feed(cat)
+                case "2":
+                    action_pet(cat)
+                case "3":
+                    action_play(cat)
+                case "4":
+                    action_clean(cat)
+                case "5":
+                    action_sleep(cat)
+                case "6":
+                    action_shop(cat)
+                case "7":
+                    action_outside(cat)
+                case "8":
+                    action_work(cat)
+                case "9":
+                    action_vet(cat)
+                case "10":
+                    action_stats(cat)
+                case "11":
+                    action_settings(cat)
+                case _:
+                    print("=" * 50)
+                    print("Введите число от 0 до 11")
+                    log_to_file("DEBUG", f"Неверный ввод: {user_choice}")
+                    wait_and_clear()
+                    continue
+
+            apply_clamp(cat)
+            if is_dead(cat):
                 print("=" * 50)
-                print("Введите число от 0 до 11")
-                log_to_file("DEBUG", f"Неверный ввод: {user_choice}")
-                wait_and_clear()
-                continue
+                print(f"{cat['name']} умер...")
+                print(f"Игра длилась {cat['day']} дней")
+                log_to_file("WARNING", f"ИГРА ОКОНЧЕНА: кот умер на {cat['day']} дне")
+                time.sleep(2)
+                break
 
-        apply_clamp(cat)
-        if is_dead(cat):
-            print("=" * 50)
-            print(f"{cat['name']} умер...")
-            print(f"Игра длилась {cat['day']} дней")
-            log_to_file("WARNING", f"ИГРА ОКОНЧЕНА: кот умер на {cat['day']} дне")
-            time.sleep(2)
-            break
+            save_game(cat)
 
+    except KeyboardInterrupt:
+        print("=" * 50)
         save_game(cat)
+        log_to_file("INFO", "Игра прервана пользователем (Ctrl+C)")
+        print("Прогресс сохранён. До встречи!")
+        return
 
     if os.path.exists(SAVE_FILE):
         os.remove(SAVE_FILE)
