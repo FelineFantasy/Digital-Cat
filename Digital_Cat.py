@@ -121,6 +121,11 @@ def wait_and_clear():
     clear_console()
 
 
+def wait_for_enter():
+    """Ждёт нажатия Enter (для действий где нужен ручной контроль)."""
+    input("\nНажмите Enter чтобы продолжить...")
+
+
 def clamp(value, min_val=0, max_val=100):
     """Ограничивает значение между min_val и max_val."""
     return max(min_val, min(value, max_val))
@@ -244,7 +249,9 @@ def random_event(cat: CatState):
             cat["money"] += found_money
             print(f"{cat['name']} нашёл {found_money} монет!")
             print("=" * 50)
-            log_to_file("DEBUG", f"Событие: кот нашёл {found_money} монет")
+            log_to_file(
+                "DEBUG", f"Событие: кот нашёл {found_money} монет"
+            )
         elif event == 4:
             print(f"{cat['name']} бегает по комнате!")
             print("=" * 50)
@@ -365,7 +372,9 @@ def action_pet(cat: CatState):
         )
         print("=" * 50)
         print(f"Вы погладили {cat['name']}а. +1 к счастью, +1 к любви.")
-        print(f"Теперь счастье: {cat['happiness']}, любовь: {cat['love']}")
+        print(
+            f"Теперь счастье: {cat['happiness']}, любовь: {cat['love']}"
+        )
 
     wait_and_clear()
 
@@ -395,11 +404,14 @@ def action_play(cat: CatState):
         cat["happiness"] += 10
         log_to_file(
             "DEBUG",
-            f"После игры: energy={cat['energy']}, happiness={cat['happiness']}"
+            f"После игры: energy={cat['energy']}, "
+            f"happiness={cat['happiness']}"
         )
         print("=" * 50)
         print(f"Вы поиграли с {cat['name']}ом. -5 энергии, +10 счастья.")
-        print(f"Теперь энергия: {cat['energy']}, счастье: {cat['happiness']}")
+        print(
+            f"Теперь энергия: {cat['energy']}, счастье: {cat['happiness']}"
+        )
 
     wait_and_clear()
 
@@ -490,9 +502,9 @@ def action_sleep(cat: CatState):
 
 @log
 def action_shop(cat: CatState):
-    """Действие: сходить в магазин."""
+    """Действие: сходить в магазин (остаётся на экране до выхода)."""
     log_to_file("DEBUG", f"Вход в магазин: money={cat['money']}")
-    wait_and_clear()
+    clear_console()
     while True:
         print("=" * 50)
         print("Вы в магазине")
@@ -510,8 +522,11 @@ def action_shop(cat: CatState):
             case 0:
                 print("=" * 50)
                 print("Вы вышли из магазина")
-                log_to_file("DEBUG", f"Выход из магазина: money={cat['money']}")
-                wait_and_clear()
+                log_to_file(
+                    "DEBUG", f"Выход из магазина: money={cat['money']}"
+                )
+                wait_for_enter()
+                clear_console()
                 return
             case 1:
                 if cat["money"] >= 15:
@@ -524,7 +539,9 @@ def action_shop(cat: CatState):
                         f"happiness={cat['happiness']}, love={cat['love']}"
                     )
                     print("=" * 50)
-                    print("Вы купили игрушку. -15 монет, +25 счастья, +10 любви")
+                    print(
+                        "Вы купили игрушку. -15 монет, +25 счастья, +10 любви"
+                    )
                     print(
                         f"Теперь монеты: {cat['money']}, "
                         f"счастье: {cat['happiness']}, любовь: {cat['love']}"
@@ -536,7 +553,8 @@ def action_shop(cat: CatState):
                     )
                     print("=" * 50)
                     print("Недостаточно монет!")
-                wait_and_clear()
+                wait_for_enter()
+                clear_console()
             case 2:
                 if cat["money"] >= 10:
                     cat["money"] -= 10
@@ -566,7 +584,8 @@ def action_shop(cat: CatState):
                     )
                     print("=" * 50)
                     print("Недостаточно монет!")
-                wait_and_clear()
+                wait_for_enter()
+                clear_console()
             case 3:
                 if cat["money"] >= 20:
                     cat["money"] -= 20
@@ -599,7 +618,8 @@ def action_shop(cat: CatState):
                     )
                     print("=" * 50)
                     print("Недостаточно монет!")
-                wait_and_clear()
+                wait_for_enter()
+                clear_console()
 
 
 @log
@@ -607,8 +627,8 @@ def action_outside(cat: CatState):
     """Действие: выпустить кота на улицу."""
     log_to_file(
         "DEBUG",
-        f"До прогулки: satiety={cat['satiety']}, happiness={cat['happiness']}, "
-        f"love={cat['love']}"
+        f"До прогулки: satiety={cat['satiety']}, "
+        f"happiness={cat['happiness']}, love={cat['love']}"
     )
 
     if cat["satiety"] <= 15:
@@ -690,10 +710,12 @@ def action_work(cat: CatState):
 
 @log
 def action_vet(cat: CatState):
-    """Действие: сходить к ветеринару."""
-    log_to_file("DEBUG", f"Вход в клинику: health={cat['health']}, "
-                f"money={cat['money']}")
-    wait_and_clear()
+    """Действие: сходить к ветеринару (остаётся на экране до выхода)."""
+    log_to_file(
+        "DEBUG",
+        f"Вход в клинику: health={cat['health']}, money={cat['money']}"
+    )
+    clear_console()
     while True:
         print("=" * 50)
         print("Вы в ветеринарной клинике")
@@ -716,7 +738,8 @@ def action_vet(cat: CatState):
                     f"Выход из клиники: health={cat['health']}, "
                     f"money={cat['money']}"
                 )
-                wait_and_clear()
+                wait_for_enter()
+                clear_console()
                 return
             case 1:
                 if cat["money"] >= 30:
@@ -742,7 +765,8 @@ def action_vet(cat: CatState):
                     )
                     print("=" * 50)
                     print("Недостаточно монет!")
-                wait_and_clear()
+                wait_for_enter()
+                clear_console()
             case 2:
                 if cat["money"] >= 50:
                     cat["money"] -= 50
@@ -766,7 +790,8 @@ def action_vet(cat: CatState):
                     )
                     print("=" * 50)
                     print("Недостаточно монет!")
-                wait_and_clear()
+                wait_for_enter()
+                clear_console()
             case 3:
                 if cat["money"] >= 80:
                     cat["money"] -= 80
@@ -791,12 +816,13 @@ def action_vet(cat: CatState):
                     )
                     print("=" * 50)
                     print("Недостаточно монет!")
-                wait_and_clear()
+                wait_for_enter()
+                clear_console()
 
 
 @log
 def action_stats(cat: CatState):
-    """Действие: показать статистику."""
+    """Действие: показать статистику (остаётся на экране)."""
     log_to_file(
         "DEBUG",
         f"Показ статистики: день={cat['day']}, имя={cat['name']}, "
@@ -816,15 +842,16 @@ def action_stats(cat: CatState):
     print(f"Дней в игре: {cat['day']}")
     print(f"Монет: {cat['money']}")
     print(f"Любовь: {cat['love']}")
-    wait_and_clear()
+    wait_for_enter()
+    clear_console()
 
 
 @log
 def action_settings(cat: CatState):
-    """Действие: настройки"""
+    """Действие: настройки (остаётся на экране до выхода)."""
     global SCREEN_CLEAR_DELAY
     log_to_file("DEBUG", "Вход в настройки")
-    wait_and_clear()
+    clear_console()
     while True:
         print("=" * 50)
         print("Вы в настройках")
@@ -842,7 +869,8 @@ def action_settings(cat: CatState):
                 print("=" * 50)
                 print("Вы вышли из настроек")
                 log_to_file("DEBUG", "Выход из настроек")
-                wait_and_clear()
+                wait_for_enter()
+                clear_console()
                 return
             case 1:
                 new_name = input("Введите новое имя для кота: ")
@@ -853,7 +881,8 @@ def action_settings(cat: CatState):
                 cat["name"] = new_name
                 print("=" * 50)
                 print(f"Теперь имя кота: {cat['name']}")
-                wait_and_clear()
+                wait_for_enter()
+                clear_console()
             case 2:
                 if os.path.exists(SAVE_FILE):
                     os.remove(SAVE_FILE)
@@ -872,7 +901,8 @@ def action_settings(cat: CatState):
                     )
                     print("=" * 50)
                     print("Не удалось удалить сохранение!")
-                    wait_and_clear()
+                    wait_for_enter()
+                    clear_console()
             case 3:
                 log_to_file("DEBUG", "Показана информация об игре")
                 print("=" * 50)
@@ -881,7 +911,8 @@ def action_settings(cat: CatState):
                 print(f"Лицензия: {LICENSE}")
                 print("Котов накормлено: бесконечность")
                 print("Особая благодарность: коту, который вдохновил")
-                wait_and_clear()
+                wait_for_enter()
+                clear_console()
             case 4:
                 print("=" * 50)
                 print(f"Текущая задержка: {SCREEN_CLEAR_DELAY} сек.")
@@ -896,12 +927,15 @@ def action_settings(cat: CatState):
                             f"{SCREEN_CLEAR_DELAY} на {new_delay}"
                         )
                         SCREEN_CLEAR_DELAY = new_delay
-                        print(f"Задержка изменена на {SCREEN_CLEAR_DELAY} сек.")
+                        print(
+                            f"Задержка изменена на {SCREEN_CLEAR_DELAY} сек."
+                        )
                     else:
                         print("Ошибка! Введите число от 0.5 до 5.0")
                 except ValueError:
                     print("Ошибка! Это не число.")
-                wait_and_clear()
+                wait_for_enter()
+                clear_console()
 
 
 def show_welcome_screen():
@@ -960,7 +994,8 @@ def main():
             )
             clear_console()
             print(
-                f"Сохранение загружено! День {cat['day']}, {cat['name']} ждёт вас."
+                f"Сохранение загружено! День {cat['day']}, "
+                f"{cat['name']} ждёт вас."
             )
             print("Отличный выбор!")
             time.sleep(1)
@@ -1014,7 +1049,10 @@ def main():
                 case "0":
                     print("=" * 50)
                     save_game(cat)
-                    log_to_file("INFO", "Игра завершена пользователем (выход из меню)")
+                    log_to_file(
+                        "INFO",
+                        "Игра завершена пользователем (выход из меню)"
+                    )
                     print("До встречи!")
                     return
                 case "1":
