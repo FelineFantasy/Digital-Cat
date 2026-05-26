@@ -47,7 +47,7 @@ PHASES = {
 
 SCREEN_CLEAR_DELAY = 1.5
 
-VERSION = "v3.0.1"
+VERSION = "v3.0.2"
 AUTHOR = "Тимур (FelineFantasy)"
 LICENSE = "MIT"
 
@@ -234,26 +234,26 @@ def random_event(cat: CatState):
         log_to_file("DEBUG", "Грязный лоток: happiness-2, health-1")
 
     if random.random() < 0.15:
-        event = random.randint(1, 4)
+        event = random.randint(1, 5)
         if event == 1:
-            print(f"{cat['name']} мяукнул.")
+            print(f"Кот {cat['name']} мяукнул.")
             print("=" * 50)
             log_to_file("DEBUG", "Событие: кот мяукнул")
         elif event == 2 and not cat["dirty_tray"]:
             cat["dirty_tray"] = True
-            print(f"{cat['name']} сходил в лоток!")
+            print(f"Кот {cat['name']} сходил в лоток!")
             print("=" * 50)
             log_to_file("DEBUG", "Событие: кот сходил в лоток")
         elif event == 3:
             found_money = random.randint(1, 5)
             cat["money"] += found_money
-            print(f"{cat['name']} нашёл {found_money} монет!")
+            print(f"Кот {cat['name']} нашёл {found_money} монет!")
             print("=" * 50)
             log_to_file(
                 "DEBUG", f"Событие: кот нашёл {found_money} монет"
             )
         elif event == 4:
-            print(f"{cat['name']} бегает по комнате!")
+            print(f"Кот {cat['name']} бегает по комнате!")
             print("=" * 50)
             log_to_file("DEBUG", "Событие: кот бегает по комнате")
 
@@ -307,7 +307,7 @@ def action_feed(cat: CatState):
     if cat["satiety"] >= 100:
         log_to_file("DEBUG", "Кот уже сыт, выход")
         print("=" * 50)
-        print(f"{cat['name']} уже сыт!")
+        print(f"Кот {cat['name']} уже сыт!")
         wait_and_clear()
         return
     if cat["money"] < 5:
@@ -321,7 +321,7 @@ def action_feed(cat: CatState):
     cat["satiety"] += 10
 
     print("=" * 50)
-    print(f"Вы покормили {cat['name']}а. -5 монет, +10 сытости.")
+    print(f"Вы покормили кота {cat['name']}. -5 монет, +10 сытости.")
     print(f"Теперь монеты: {cat['money']}, сытость: {cat['satiety']}")
 
     if random.random() < 0.1:
@@ -331,7 +331,7 @@ def action_feed(cat: CatState):
             f"Кота стошнило! health-10, новое health={cat['health']}"
         )
         print("=" * 50)
-        print(f"{cat['name']}а стошнило. -10 здоровья.")
+        print(f"Кота {cat['name']} стошнило. -10 здоровья.")
         print(f"Теперь здоровье: {cat['health']}")
 
     log_to_file(
@@ -353,15 +353,15 @@ def action_pet(cat: CatState):
     if cat["happiness"] >= 100 and cat["love"] >= 100:
         log_to_file("DEBUG", "Кот уже максимально счастлив и любит")
         print("=" * 50)
-        print(f"{cat['name']} уже счастлив и очень любит вас!")
+        print(f"Кот {cat['name']} уже счастлив и очень любит вас!")
     elif cat["happiness"] >= 100:
         log_to_file("DEBUG", "Кот уже максимально счастлив")
         print("=" * 50)
-        print(f"{cat['name']} уже счастлив!")
+        print(f"Кот {cat['name']} уже счастлив!")
     elif cat["love"] >= 100:
         log_to_file("DEBUG", "Любовь уже максимальна")
         print("=" * 50)
-        print(f"{cat['name']} уже достаточно любит вас!")
+        print(f"Кот {cat['name']} уже достаточно любит вас!")
     else:
         cat["happiness"] += 1
         cat["love"] += 1
@@ -371,7 +371,7 @@ def action_pet(cat: CatState):
             f"love={cat['love']}"
         )
         print("=" * 50)
-        print(f"Вы погладили {cat['name']}а. +1 к счастью, +1 к любви.")
+        print(f"Вы погладили кота {cat['name']}. +1 к счастью, +1 к любви.")
         print(
             f"Теперь счастье: {cat['happiness']}, любовь: {cat['love']}"
         )
@@ -390,15 +390,15 @@ def action_play(cat: CatState):
     if cat["energy"] <= 0:
         log_to_file("DEBUG", "Энергия = 0, игра невозможна")
         print("=" * 50)
-        print(f"У {cat['name']} недостаточно энергии!")
+        print(f"У кота {cat['name']} недостаточно энергии!")
     elif cat["energy"] < 5:
         log_to_file("DEBUG", f"Энергия {cat['energy']} < 5, игра невозможна")
         print("=" * 50)
-        print(f"У {cat['name']} слишком мало энергии для игры!")
+        print(f"У кота {cat['name']} слишком мало энергии для игры!")
     elif cat["happiness"] >= 100:
         log_to_file("DEBUG", "Счастье максимально, игра не нужна")
         print("=" * 50)
-        print(f"{cat['name']} уже счастлив!")
+        print(f"Кот {cat['name']} уже счастлив!")
     else:
         cat["energy"] -= 5
         cat["happiness"] += 10
@@ -408,7 +408,7 @@ def action_play(cat: CatState):
             f"happiness={cat['happiness']}"
         )
         print("=" * 50)
-        print(f"Вы поиграли с {cat['name']}ом. -5 энергии, +10 счастья.")
+        print(f"Вы поиграли с котом {cat['name']}. -5 энергии, +10 счастья.")
         print(
             f"Теперь энергия: {cat['energy']}, счастье: {cat['happiness']}"
         )
@@ -435,7 +435,7 @@ def action_clean(cat: CatState):
             f"love={cat['love']}, happiness={cat['happiness']}"
         )
         print("=" * 50)
-        print(f"Вы убрали лоток за {cat['name']}ом. +5 любви, +5 счастья.")
+        print(f"Вы убрали лоток за котом {cat['name']}. +5 любви, +5 счастья.")
         print(f"Теперь любовь: {cat['love']}, счастье: {cat['happiness']}")
     else:
         log_to_file("DEBUG", "Лоток уже чист, уборка не требуется")
@@ -457,12 +457,12 @@ def action_sleep(cat: CatState):
     if cat["energy"] >= 100:
         log_to_file("DEBUG", "Энергия максимальна, сон не нужен")
         print("=" * 50)
-        print(f"У {cat['name']} уже достаточно энергии!")
+        print(f"У кота {cat['name']} уже достаточно энергии!")
         wait_and_clear()
         return
 
     print("=" * 50)
-    print(f"Вы уложили {cat['name']}а спать...")
+    print(f"Вы уложили кота {cat['name']} спать...")
 
     if random.random() < 0.2:
         cat["happiness"] -= 10
@@ -470,11 +470,11 @@ def action_sleep(cat: CatState):
             "WARNING",
             f"Кот убежал! happiness-10, новое happiness={cat['happiness']}"
         )
-        print(f"{cat['name']} убежал!")
+        print(f"Кот {cat['name']} убежал!")
         wait_and_clear()
         return
 
-    print(f"{cat['name']} спит...")
+    print(f"Кот {cat['name']} спит...")
     time.sleep(0.5)
 
     cat["energy"] += 25
@@ -492,7 +492,7 @@ def action_sleep(cat: CatState):
         f"day={cat['day']}, love={cat['love']}"
     )
 
-    print(f"{cat['name']} проснулся. +25 энергии")
+    print(f"Кот {cat['name']} проснулся. +25 энергии")
     print(f"Теперь энергия: {cat['energy']}")
     if cat["day_phase"] == "утро":
         print(f"Наступило утро! День {cat['day']}")
@@ -649,7 +649,7 @@ def action_outside(cat: CatState):
             f"Кот слишком голоден для прогулки: satiety={cat['satiety']} <= 15"
         )
         print("=" * 50)
-        print(f"{cat['name']} слишком голоден для прогулки!")
+        print(f"Кот {cat['name']} слишком голоден для прогулки!")
         wait_and_clear()
         return
 
@@ -692,7 +692,7 @@ def action_work(cat: CatState):
             f"Недостаточно энергии для работы: {cat['energy']} <= 10"
         )
         print("=" * 50)
-        print(f"У {cat['name']}а слишком мало энергии для работы!")
+        print(f"У кота {cat['name']} слишком мало энергии для работы!")
         wait_and_clear()
         return
 
@@ -709,7 +709,7 @@ def action_work(cat: CatState):
 
     print("=" * 50)
     print(
-        f"{cat['name']} помог вам с работой! -10 энергии, "
+        f"Кот {cat['name']} помог вам с работой! -10 энергии, "
         f"+{earned} монет, -5 счастья"
     )
     print(
@@ -740,7 +740,7 @@ def action_vet(cat: CatState):
                 f"health={cat['health']}, satiety={cat['satiety']}"
             )
             print("=" * 50)
-            print(f"{cat['name']} принял витамины!")
+            print(f"Кот {cat['name']} принял витамины!")
             print("-30 монет, +20 здоровья, +5 сытости")
             print(
                 f"Теперь: монеты {cat['money']}, "
@@ -766,7 +766,7 @@ def action_vet(cat: CatState):
                 f"health={cat['health']}"
             )
             print("=" * 50)
-            print(f"{cat['name']} прошёл лечение!")
+            print(f"Кот {cat['name']} прошёл лечение!")
             print("-50 монет, +40 здоровья")
             print(
                 f"Теперь: монеты {cat['money']}, "
@@ -819,7 +819,7 @@ def action_vet(cat: CatState):
         print("=" * 50)
         print("Вы в ветеринарной клинике")
         print("=" * 50)
-        print(f"Текущее здоровье {cat['name']}а: {cat['health']}")
+        print(f"Текущее здоровье кота {cat['name']}: {cat['health']}")
         print("0. Выйти в главное меню")
         print("1. Витамины - 30 монет (+20 здоровья)")
         print("2. Лечение - 50 монет (+40 здоровья)")
@@ -936,7 +936,7 @@ def action_settings(cat: CatState):
                     f"Задержка очистки экрана изменена с "
                     f"{SCREEN_CLEAR_DELAY} на {new_delay}"
                 )
-                SCREEN_CLEAR_DELAY = new_delay  # убрал повторный global
+                SCREEN_CLEAR_DELAY = new_delay
                 print(
                     f"Задержка изменена на {SCREEN_CLEAR_DELAY} сек."
                 )
@@ -1036,7 +1036,7 @@ def main():
             clear_console()
             print(
                 f"Сохранение загружено! День {cat['day']}, "
-                f"{cat['name']} ждёт вас."
+                f"кот {cat['name']} ждёт вас."
             )
             print("Отличный выбор!")
             time.sleep(1)
@@ -1071,7 +1071,7 @@ def main():
 
             if is_dead(cat):
                 print("=" * 50)
-                print(f"{cat['name']} умер...")
+                print(f"Кот {cat['name']} умер...")
                 print(f"Игра длилась {cat['day']} дней")
                 log_to_file(
                     "WARNING",
@@ -1122,7 +1122,7 @@ def main():
             apply_clamp(cat)
             if is_dead(cat):
                 print("=" * 50)
-                print(f"{cat['name']} умер...")
+                print(f"Кот {cat['name']} умер...")
                 print(f"Игра длилась {cat['day']} дней")
                 log_to_file(
                     "WARNING",
