@@ -71,10 +71,8 @@ Main menu (options 0-11):
     └── log.txt          # Game log (auto-generated)
 
 ## 👤 Author
-
-**Timur (FelineFantasy)**
-
-License: MIT
+- **FelineFantasy**
+- **License**: MIT
 
 ---
 
