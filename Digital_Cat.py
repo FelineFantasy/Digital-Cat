@@ -53,6 +53,7 @@ CYAN = '\033[96m'
 MAGENTA = '\033[95m'
 RESET = '\033[0m'
 BOLD = '\033[1m'
+LIGHTRED = "\033[91m"
 
 SCREEN_CLEAR_DELAY = 1.5
 
@@ -288,18 +289,18 @@ def apply_clamp(cat: CatState):
 
 
 def show_menu():
-    """Показывает главное меню."""
-    print("0. Выйти из игры")
+    """Показывает аккуратное главное меню с хорошей читаемостью."""
+    print(f"{LIGHTRED}0. Выйти из игры{RESET}")
     print(f"{GREEN}1. Покормить кота{RESET}")
-    print(f"{CYAN}2. Погладить кота{RESET}")
-    print(f"{YELLOW}3. Поиграть с котом{RESET}")
-    print(f"{MAGENTA}4. Убрать за котом{RESET}")
+    print(f"{GREEN}2. Погладить кота{RESET}")
+    print(f"{GREEN}3. Поиграть с котом{RESET}")
+    print(f"{YELLOW}4. Убрать за котом{RESET}")
     print(f"{YELLOW}5. Уложить кота спать{RESET}")
-    print(f"{GREEN}6. Сходить в зоомагазин{RESET}")
+    print(f"{CYAN}6. Сходить в зоомагазин{RESET}")
     print(f"{CYAN}7. Выпустить кота на улицу{RESET}")
-    print(f"{YELLOW}8. Заработать монеты{RESET}")
-    print(f"{RED}9. Сходить к ветеринару{RESET}")
-    print(f"{CYAN}10. Статистика кота{RESET}")
+    print(f"{CYAN}8. Заработать монеты{RESET}")
+    print(f"{LIGHTRED}9. Сходить к ветеринару{RESET}")
+    print(f"{MAGENTA}10. Статистика кота{RESET}")
     print(f"{MAGENTA}11. Настройки{RESET}")
     print("=" * 50)
 
@@ -877,7 +878,7 @@ def action_stats(cat: CatState):
     print(f"Сытость: {cat['satiety']}")
     print(f"Счастье: {cat['happiness']}")
     print(f"Энергия: {cat['energy']}")
-    
+
     # Цвет для здоровья
     if cat['health'] >= 70:
         health_color = GREEN
@@ -886,7 +887,7 @@ def action_stats(cat: CatState):
     else:
         health_color = RED
     print(f"Здоровье: {health_color}{cat['health']}{RESET}")
-    
+
     print(f"Кот жив: {'Да' if cat['is_alive'] else f'{RED}Нет{RESET}'}")
     if cat['dirty_tray']:
         print(f"{RED}Лоток грязный: Да{RESET}")
