@@ -46,14 +46,14 @@ jobs:
     - name: Устанавливаем PyInstaller
       run: pip install pyinstaller
       
-    - name: Собираем бинарник
+    - name: Собираем бинарник с иконкой
       shell: bash
       run: |
         if [ "${{ matrix.os }}" = "windows-latest" ]; then
-          pyinstaller --onefile --name "Digital_Cat_Windows" Digital_Cat.py
+          pyinstaller --onefile --icon=assets/cat.ico --name "Digital_Cat_Windows" Digital_Cat.py
           echo "ASSET_NAME=Digital_Cat_Windows.exe" >> $GITHUB_ENV
         elif [ "${{ matrix.os }}" = "macos-latest" ]; then
-          pyinstaller --onefile --name "Digital_Cat_macOS" Digital_Cat.py
+          pyinstaller --onefile --icon=assets/cat.icns --name "Digital_Cat_macOS" Digital_Cat.py
           echo "ASSET_NAME=Digital_Cat_macOS" >> $GITHUB_ENV
         else
           pyinstaller --onefile --name "Digital_Cat_Linux" Digital_Cat.py
