@@ -8,7 +8,7 @@ A virtual pet — cat simulator written in Python. Take care of your cat, play w
 
 ## 🌐 Website
 
-The game has a website: **[felinefantasy.github.io/Digital_Cat](https://felinefantasy.github.io/Digital_Cat/)**
+The game has a website: **[felinefantasy.github.io/Digital-Cat](https://felinefantasy.github.io/Digital-Cat/)**
 
 There you can:
 - Download the game
