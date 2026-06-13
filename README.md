@@ -40,10 +40,17 @@ Random events happen every day — the cat may find coins, use the litter box, o
 
 ## ⚙️ Installation & Launch
 
-1. Download `Digital_Cat.py`
-2. Run: `python Digital_Cat.py`
-3. Name your cat
-4. Choose actions from the menu
+### Option 1: Download executable (easiest)
+1. Go to [Releases](https://github.com/FelineFantasy/Digital-Cat/releases)
+2. Download `Digital-Cat.exe` (Windows) / `Digital-Cat` (Linux/macOS)
+3. Run the file
+
+### Option 2: Run from source (requires Python)
+```bash
+git clone https://github.com/FelineFantasy/Digital-Cat.git
+cd Digital-Cat
+python Digital-Cat.py
+```
 
 ## 🎮 Controls
 
