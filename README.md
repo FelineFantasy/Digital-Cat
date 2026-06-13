@@ -69,8 +69,8 @@ Main menu (options 0-11):
 
 ## 📁 Project Files
 
-    Digital_Cat/
-    ├── Digital_Cat.py   # Game
+    Digital-Cat/
+    ├── Digital-Cat.py   # Game
     ├── index.html       # Website
     ├── style.css        # Website styles
     ├── README.md        # Documentation
