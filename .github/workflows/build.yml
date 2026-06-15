@@ -24,7 +24,7 @@ jobs:
     - name: Проверяем, что Python-файл валидный
       shell: bash
       run: |
-        python -m py_compile Digital_Cat.py && echo "OK: синтаксис корректен"
+        python -m py_compile Digital-Cat.py && echo "OK: синтаксис корректен"
 
   build-exe:
     needs: syntax-check
@@ -50,13 +50,13 @@ jobs:
       shell: bash
       run: |
         if [ "${{ matrix.os }}" = "windows-latest" ]; then
-          pyinstaller --onefile --icon=assets/cat.ico --name "Digital_Cat_Windows" Digital_Cat.py
+          pyinstaller --onefile --icon=assets/cat.ico --name "Digital-Cat_Windows" Digital-Cat.py
           echo "ASSET_NAME=Digital_Cat_Windows.exe" >> $GITHUB_ENV
         elif [ "${{ matrix.os }}" = "macos-latest" ]; then
-          pyinstaller --onefile --icon=assets/cat.icns --name "Digital_Cat_macOS" Digital_Cat.py
+          pyinstaller --onefile --icon=assets/cat.icns --name "Digital-Cat_macOS" Digital-Cat.py
           echo "ASSET_NAME=Digital_Cat_macOS" >> $GITHUB_ENV
         else
-          pyinstaller --onefile --name "Digital_Cat_Linux" Digital_Cat.py
+          pyinstaller --onefile --name "Digital_Cat_Linux" Digital-Cat.py
           echo "ASSET_NAME=Digital_Cat_Linux" >> $GITHUB_ENV
         fi
 
