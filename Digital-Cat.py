@@ -1146,16 +1146,23 @@ def main():
                 break
 
             if cat["day"] >= 100:
+                clear_console()
                 print("=" * 50)
                 print(f"{GREEN}{BOLD}ПОЗДРАВЛЯЮ! ТЫ ПРОШЁЛ ИГРУ!{RESET}")
                 print("=" * 50)
+                print(f"{CYAN}ФИНАЛЬНАЯ СТАТИСТИКА{RESET}")
+                print("=" * 50)
+                action_stats(cat)
+                print("=" * 50)
+                print(f"{GREEN}{BOLD}Спасибо, что заботился о {cat['name']}!{RESET}")
+                print(f"{YELLOW}Кот навсегда в твоём сердце.{RESET}")
                 log_to_file(
                     "INFO",
                     f"ИГРА ПРОЙДЕНА! День {cat['day']}, имя {cat['name']}"
                 )
                 cat["is_alive"] = False
                 save_game(cat)
-                time.sleep(2)
+                time.sleep(3)
                 break
 
             show_welcome_screen()
