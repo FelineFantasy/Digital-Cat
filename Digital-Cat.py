@@ -475,7 +475,7 @@ def action_sleep(cat: CatState):
     print("=" * 50)
     print(f"Вы уложили кота {cat['name']} спать...")
 
-    if random.random() < 0.2:
+    if random.random() < 0.05:
         cat["happiness"] -= 10
         log_to_file(
             "WARNING",
