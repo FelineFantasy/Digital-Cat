@@ -309,6 +309,8 @@ def show_menu():
 @log
 def action_feed(cat: CatState):
     """Действие: покормить кота."""
+    apply_clamp(cat)
+
     log_to_file(
         "DEBUG",
         f"До кормления: satiety={cat['satiety']}, money={cat['money']}, "
@@ -356,6 +358,8 @@ def action_feed(cat: CatState):
 @log
 def action_pet(cat: CatState):
     """Действие: погладить кота."""
+    apply_clamp(cat)
+
     log_to_file(
         "DEBUG",
         f"До поглаживания: happiness={cat['happiness']}, love={cat['love']}"
@@ -393,6 +397,8 @@ def action_pet(cat: CatState):
 @log
 def action_play(cat: CatState):
     """Действие: поиграть с котом."""
+    apply_clamp(cat)
+
     log_to_file(
         "DEBUG",
         f"До игры: energy={cat['energy']}, happiness={cat['happiness']}"
@@ -430,6 +436,8 @@ def action_play(cat: CatState):
 @log
 def action_clean(cat: CatState):
     """Действие: убрать лоток."""
+    apply_clamp(cat)
+
     log_to_file(
         "DEBUG",
         f"Уборка лотка: dirty_tray={cat['dirty_tray']}, love={cat['love']}, "
@@ -459,6 +467,8 @@ def action_clean(cat: CatState):
 @log
 def action_sleep(cat: CatState):
     """Действие: уложить кота спать."""
+    apply_clamp(cat)
+
     log_to_file(
         "DEBUG",
         f"До сна: energy={cat['energy']}, day_phase={cat['day_phase']}, "
@@ -514,6 +524,8 @@ def action_sleep(cat: CatState):
 @log
 def action_shop(cat: CatState):
     """Действие: сходить в магазин (остаётся на экране до выхода)."""
+    apply_clamp(cat)
+
     log_to_file("DEBUG", f"Вход в магазин: money={cat['money']}")
     clear_console()
 
@@ -647,6 +659,8 @@ def action_shop(cat: CatState):
 @log
 def action_outside(cat: CatState):
     """Действие: выпустить кота на улицу."""
+    apply_clamp(cat)
+
     log_to_file(
         "DEBUG",
         f"До прогулки: satiety={cat['satiety']}, "
@@ -690,6 +704,8 @@ def action_outside(cat: CatState):
 @log
 def action_work(cat: CatState):
     """Действие: заработать монеты."""
+    apply_clamp(cat)
+
     log_to_file(
         "DEBUG",
         f"До работы: energy={cat['energy']}, money={cat['money']}, "
@@ -733,6 +749,8 @@ def action_work(cat: CatState):
 @log
 def action_vet(cat: CatState):
     """Действие: сходить к ветеринару (остаётся на экране до выхода)."""
+    apply_clamp(cat)
+
     log_to_file(
         "DEBUG",
         f"Вход в клинику: health={cat['health']}, money={cat['money']}"
@@ -866,6 +884,8 @@ def action_vet(cat: CatState):
 @log
 def action_stats(cat: CatState):
     """Действие: показать статистику (остаётся на экране)."""
+    apply_clamp(cat)
+
     log_to_file(
         "DEBUG",
         f"Показ статистики: день={cat['day']}, имя={cat['name']}, "
@@ -904,6 +924,8 @@ def action_stats(cat: CatState):
 def action_settings(cat: CatState):
     """Действие: настройки (остаётся на экране до выхода)."""
     global SCREEN_CLEAR_DELAY
+    apply_clamp(cat)
+
     log_to_file("DEBUG", "Вход в настройки")
     clear_console()
 
