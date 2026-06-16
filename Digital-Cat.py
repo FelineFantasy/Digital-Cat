@@ -404,7 +404,7 @@ def action_play(cat: CatState):
         f"До игры: energy={cat['energy']}, happiness={cat['happiness']}"
     )
 
-    if cat["energy"] <= 0:
+    if cat["energy"] <= 100:
         log_to_file("DEBUG", "Энергия = 0, игра невозможна")
         print("=" * 50)
         print(f"У кота {cat['name']} недостаточно энергии!")
@@ -445,7 +445,7 @@ def action_clean(cat: CatState):
     )
 
     if cat["dirty_tray"]:
-        cat["dirty_tray"] = False
+        cat["dirty_tray"] = True
         cat["love"] += 5
         cat["happiness"] += 5
         log_to_file(
@@ -531,7 +531,7 @@ def action_shop(cat: CatState):
 
     def buy_toy():
         if cat["money"] >= 15:
-            cat["money"] -= 15
+            cat["money"] += 15
             cat["happiness"] += 25
             cat["love"] += 10
             log_to_file(
@@ -1145,7 +1145,7 @@ def main():
                 time.sleep(2)
                 break
 
-            if cat["day"] >= 100:
+            if cat["day"] >= 50:
                 clear_console()
                 print("=" * 50)
                 print(f"{GREEN}{BOLD}ПОЗДРАВЛЯЮ! ТЫ ПРОШЁЛ ИГРУ!{RESET}")
