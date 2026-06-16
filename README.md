@@ -1,10 +1,10 @@
-# Digital Cat Game 🐱 v3.0.0
+# Digital Cat Game 🐱 v4.0.0
 
 [![Python Version](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Website](https://img.shields.io/badge/website-online-brightgreen.svg)](https://felinefantasy.github.io/Digital-Cat/)
 
-A virtual pet — cat simulator written in Python. Take care of your cat, play with it, buy treats, and monitor its health!
+A virtual pet - cat simulator written in Python. Take care of your cat, play with it, buy treats, and monitor its health!
 
 ## 🌐 Website
 
@@ -84,6 +84,13 @@ Main menu (options 0-11):
 ---
 
 ## 📦 Changelog
+
+### v4.0.0 (16.06.2026)
+- removed the bugs that were added
+- Improved game stability
+- Fixed rare bugs
+- Optimized code
+- The cat is glad
 
 ### v3.0.0 (18.05.2026)
 - Added logging system (INFO/DEBUG/WARNING/ERROR)
