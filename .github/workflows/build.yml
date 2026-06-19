@@ -56,7 +56,7 @@ jobs:
           pyinstaller --onefile --icon=assets/cat.icns --name "Digital-Cat_macOS" Digital-Cat.py
           echo "ASSET_NAME=Digital_Cat_macOS" >> $GITHUB_ENV
         else
-          pyinstaller --onefile --name "Digital_Cat_Linux" Digital-Cat.py
+          pyinstaller --onefile --name "Digital-Cat_Linux" Digital-Cat.py
           echo "ASSET_NAME=Digital_Cat_Linux" >> $GITHUB_ENV
         fi
 
