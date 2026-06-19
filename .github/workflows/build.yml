@@ -57,7 +57,7 @@ jobs:
           echo "ASSET_NAME=Digital_Cat_macOS" >> $GITHUB_ENV
         else
           pyinstaller --onefile --name "Digital-Cat_Linux" Digital-Cat.py
-          echo "ASSET_NAME=Digital_Cat_Linux" >> $GITHUB_ENV
+          echo "ASSET_NAME=Digital-Cat_Linux" >> $GITHUB_ENV
         fi
 
     - name: Подготовить бинарник к релизу (убираем .zip)
@@ -67,10 +67,22 @@ jobs:
         cp dist/* release_assets/
         echo "ASSET_FILE=release_assets/$(ls release_assets)" >> $GITHUB_ENV
 
+    - name: Пересоздать тег main
+      shell: bash
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git tag -d main || true
+        git push origin :main || true
+        git tag main
+        git push origin main
+
     - name: Загружаем результат в Релиз
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: ${{ github.ref_name }}
+        tag_name: main
         files: release_assets/*
+        name: "Digital Cat (main)"
+        body: "Самые свежие бинарники. Тег main пересоздаётся при каждом пуше."
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
