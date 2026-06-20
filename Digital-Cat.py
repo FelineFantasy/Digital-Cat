@@ -25,6 +25,7 @@ RESET = '\033[0m'
 BOLD = '\033[1m'
 LIGHTRED = "\033[91m"
 
+CLEAR_SCREEN = "\033[H\033[J""
 SCREEN_CLEAR_DELAY = 1.5
 
 VERSION = "v4.0.0"
@@ -124,7 +125,7 @@ class CatState(TypedDict):
 
 def clear_console():
     """Очищает консоль."""
-    os.system('cls' if os.name == 'nt' else 'clear')
+    print(CLEAR_SCREEN, end="")
 
 
 def wait_and_clear():
