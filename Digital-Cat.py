@@ -334,6 +334,7 @@ def action_feed(cat: CatState):
 
     cat["money"] -= 5
     cat["satiety"] += 10
+    apply_clamp(cat)
 
     print("=" * 50)
     print(f"{GREEN}Вы покормили кота {cat['name']}. -5 монет, +10 сытости.{RESET}")
@@ -341,6 +342,7 @@ def action_feed(cat: CatState):
 
     if random.random() < 0.1:
         cat["health"] -= 10
+        apply_clamp(cat)
         log_to_file(
             "WARNING",
             f"Кота стошнило! health-10, новое health={cat['health']}"
@@ -382,6 +384,7 @@ def action_pet(cat: CatState):
     else:
         cat["happiness"] += 1
         cat["love"] += 1
+        apply_clamp(cat)
         log_to_file(
             "DEBUG",
             f"После поглаживания: happiness={cat['happiness']}, "
@@ -421,6 +424,7 @@ def action_play(cat: CatState):
     else:
         cat["energy"] -= 5
         cat["happiness"] += 10
+        apply_clamp(cat)
         log_to_file(
             "DEBUG",
             f"После игры: energy={cat['energy']}, "
@@ -450,6 +454,7 @@ def action_clean(cat: CatState):
         cat["dirty_tray"] = False
         cat["love"] += 5
         cat["happiness"] += 5
+        apply_clamp(cat)
         log_to_file(
             "DEBUG",
             f"После уборки: dirty_tray={cat['dirty_tray']}, "
@@ -489,6 +494,7 @@ def action_sleep(cat: CatState):
 
     if random.random() < 0.05:
         cat["happiness"] -= 10
+        apply_clamp(cat)
         log_to_file(
             "WARNING",
             f"Кот убежал! happiness-10, новое happiness={cat['happiness']}"
@@ -508,6 +514,7 @@ def action_sleep(cat: CatState):
     if cat["day_phase"] == "утро":
         cat["day"] += 1
         cat["love"] += 10
+    apply_clamp(cat)
 
     log_to_file(
         "DEBUG",
@@ -536,6 +543,7 @@ def action_shop(cat: CatState):
             cat["money"] -= 15
             cat["happiness"] += 25
             cat["love"] += 10
+            apply_clamp(cat)
             log_to_file(
                 "DEBUG",
                 f"Куплена игрушка: money={cat['money']}, "
@@ -561,8 +569,9 @@ def action_shop(cat: CatState):
         if cat["money"] >= 10:
             cat["money"] -= 10
             cat["happiness"] += 10
-            cat["satiety"] = clamp(cat["satiety"] + 25)
+            cat["satiety"] += 25
             cat["love"] += 10
+            apply_clamp(cat)
             log_to_file(
                 "DEBUG",
                 f"Куплены Dreamies: money={cat['money']}, "
@@ -593,9 +602,10 @@ def action_shop(cat: CatState):
         if cat["money"] >= 20:
             cat["money"] -= 20
             cat["happiness"] += 30
-            cat["satiety"] = clamp(cat["satiety"] + 5)
+            cat["satiety"] += 5
             cat["love"] += 20
             cat["health"] -= 5
+            apply_clamp(cat)
             log_to_file(
                 "DEBUG",
                 f"Куплена кошачья мята: money={cat['money']}, "
@@ -682,6 +692,7 @@ def action_outside(cat: CatState):
     cat["happiness"] += 25
     cat["love"] += 10
     cat["satiety"] -= 15
+    apply_clamp(cat)
 
     log_to_file(
         "DEBUG",
@@ -728,6 +739,7 @@ def action_work(cat: CatState):
     earned = random.randint(10, 25)
     cat["money"] += earned
     cat["happiness"] -= 5
+    apply_clamp(cat)
 
     log_to_file(
         "DEBUG",
@@ -762,8 +774,9 @@ def action_vet(cat: CatState):
     def vitamins():
         if cat["money"] >= 30:
             cat["money"] -= 30
-            cat["health"] = clamp(cat["health"] + 20)
-            cat["satiety"] = clamp(cat["satiety"] + 5)
+            cat["health"] += 20
+            cat["satiety"] += 5
+            apply_clamp(cat)
             log_to_file(
                 "DEBUG",
                 f"Куплены витамины: money={cat['money']}, "
@@ -789,7 +802,8 @@ def action_vet(cat: CatState):
     def treatment():
         if cat["money"] >= 50:
             cat["money"] -= 50
-            cat["health"] = clamp(cat["health"] + 40)
+            cat["health"] += 40
+            apply_clamp(cat)
             log_to_file(
                 "DEBUG",
                 f"Проведено лечение: money={cat['money']}, "
@@ -816,6 +830,7 @@ def action_vet(cat: CatState):
         if cat["money"] >= 80:
             cat["money"] -= 80
             cat["health"] = 100
+            apply_clamp(cat)
             log_to_file(
                 "DEBUG",
                 f"Экстренная помощь: money={cat['money']}, "
