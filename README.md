@@ -1,14 +1,14 @@
 # Digital Cat Game 🐱 v4.0.0
 
-[![Python Version](https://shields.io)](https://python.org)
-[![License](https://shields.io)](LICENSE)
-[![Website](https://shields.io)](https://github.io)
+[![Python Version](https://img.shields.io/badge/python-3.10+-blue.svg)](https://python.org)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Website](https://img.shields.io/badge/website-online-brightgreen.svg)](https://felinefantasy.github.io/Digital-Cat/)
 
 A virtual pet - cat simulator written in Python. Take care of your cat, play with it, buy treats, and monitor its health!
 
 ## 🌐 Website
 
-The game has a website: **[felinefantasy.github.io/Digital-Cat](https://github.io)**
+The game has a website: **[felinefantasy.github.io/Digital-Cat](https://felinefantasy.github.io/Digital-Cat/)**
 
 There you can:
 - Download the game
@@ -41,13 +41,13 @@ Random events happen every day — the cat may find coins, use the litter box, o
 ## ⚙️ Installation & Launch
 
 ### Option 1: Download executable (easiest)
-1. Go to [Releases](https://github.com)
+1. Go to [Releases](https://github.com/FelineFantasy/Digital-Cat/releases/tag/main)
 2. Download `Digital-Cat.exe` (Windows) / `Digital-Cat` (Linux/macOS)
 3. Run the file
 
 ### Option 2: Run from source (requires Python)
 ```bash
-git clone https://github.com
+git clone https://github.com/FelineFantasy/Digital-Cat.git
 cd Digital-Cat
 python Digital-Cat.py
 ```
