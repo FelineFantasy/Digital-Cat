@@ -1,14 +1,14 @@
 # Digital Cat Game 🐱 v4.0.0
 
-[![Python Version](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Website](https://img.shields.io/badge/website-online-brightgreen.svg)](https://felinefantasy.github.io/Digital-Cat/)
+[![Python Version](https://shields.io)](https://python.org)
+[![License](https://shields.io)](LICENSE)
+[![Website](https://shields.io)](https://github.io)
 
 A virtual pet - cat simulator written in Python. Take care of your cat, play with it, buy treats, and monitor its health!
 
 ## 🌐 Website
 
-The game has a website: **[felinefantasy.github.io/Digital-Cat](https://felinefantasy.github.io/Digital-Cat/)**
+The game has a website: **[felinefantasy.github.io/Digital-Cat](https://github.io)**
 
 There you can:
 - Download the game
@@ -41,13 +41,13 @@ Random events happen every day — the cat may find coins, use the litter box, o
 ## ⚙️ Installation & Launch
 
 ### Option 1: Download executable (easiest)
-1. Go to [Releases](https://github.com/FelineFantasy/Digital-Cat/releases)
+1. Go to [Releases](https://github.com)
 2. Download `Digital-Cat.exe` (Windows) / `Digital-Cat` (Linux/macOS)
 3. Run the file
 
 ### Option 2: Run from source (requires Python)
 ```bash
-git clone https://github.com/FelineFantasy/Digital-Cat.git
+git clone https://github.com
 cd Digital-Cat
 python Digital-Cat.py
 ```
@@ -69,13 +69,24 @@ Main menu (options 0-11):
 
 ## 📁 Project Files
 
-    Digital-Cat/
-    ├── Digital-Cat.py   # Game
-    ├── index.html       # Website
-    ├── style.css        # Website styles
-    ├── README.md        # Documentation
-    ├── save.dat         # Save file (auto-generated)
-    └── log.txt          # Game log (auto-generated)
+```text
+Digital-Cat/
+├── .github/
+│   └── workflows/
+│       └── build.yml
+├── assets/
+│   ├── cat.icns
+│   ├── cat.ico
+│   └── cat.png
+├── .gitignore
+├── Digital-Cat.py   # Game
+├── LICENSE
+├── README.md        # Documentation
+├── index.html       # Website
+├── style.css        # Website styles
+├── save.dat         # Save file (auto-generated)
+└── log.txt          # Game log (auto-generated)
+```
 
 ## 👤 Author
 - **FelineFantasy**
