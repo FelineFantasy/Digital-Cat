@@ -81,6 +81,7 @@ jobs:
         git config user.email "github-actions[bot]@users.noreply.github.com"
         git tag -d main || true
         git push origin :refs/tags/main || true
+        sleep 3
         git tag main
         git push origin refs/tags/main --force
 
