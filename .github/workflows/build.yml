@@ -60,6 +60,7 @@ jobs:
     - name: Устанавливаем зависимости (macOS)
       if: runner.os == 'macOS'
       run: |
+        brew install file
         pip install nuitka
 
     - name: Устанавливаем зависимости (Windows)
