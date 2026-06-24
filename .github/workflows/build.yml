@@ -43,13 +43,6 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Устанавливаем Dependency Walker (только Windows)
-      if: runner.os == 'Windows'
-      run: |
-        curl -L -o depends.zip https://dependencywalker.com/depends22_x86.zip
-        unzip depends.zip -d depends
-        echo "${{ github.workspace }}/depends" >> $GITHUB_PATH
-
     - name: Устанавливаем зависимости (Linux)
       if: runner.os == 'Linux'
       run: |
@@ -63,17 +56,15 @@ jobs:
         brew install file
         pip install nuitka
 
-    - name: Устанавливаем зависимости (Windows)
+    - name: Устанавливаем PyInstaller (Windows)
       if: runner.os == 'Windows'
       run: |
-        pip install nuitka
+        pip install pyinstaller
 
-    - name: Собираем бинарник с Nuitka (Windows)
+    - name: Собираем бинарник (Windows)
       if: runner.os == 'Windows'
-      env:
-        PATH: ${{ github.workspace }}/depends:${{ env.PATH }}
       run: |
-        python -m nuitka --standalone --onefile --windows-icon-from-ico=assets/cat.ico --output-dir=dist --output-filename=Digital-Cat_Windows.exe Digital-Cat.py
+        pyinstaller --onefile --icon=assets/cat.ico --name "Digital-Cat_Windows" Digital-Cat.py
         echo "ASSET_NAME=Digital-Cat_Windows.exe" >> $GITHUB_ENV
 
     - name: Устанавливаем file (macOS)
@@ -123,6 +114,6 @@ jobs:
         tag_name: main
         files: release_assets/*
         name: "Digital Cat (main)"
-        body: "Самые свежие бинарники. Тег main пересоздаётся при каждом пуше."
+        body: "Самые свежие бинарники. Тег main пересоздается при каждом пуше."
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
