@@ -43,6 +43,13 @@ jobs:
       with:
         python-version: '3.11'
     
+    - name: Устанавливаем Dependency Walker (только Windows)
+      if: runner.os == 'Windows'
+      run: |
+        curl -L -o depends.zip https://dependencywalker.com/depends22_x86.zip
+        unzip depends.zip -d depends
+        echo "${{ github.workspace }}/depends" >> $GITHUB_PATH
+    
     - name: Устанавливаем зависимости
       run: |
         pip install nuitka
@@ -65,16 +72,7 @@ jobs:
       shell: bash
       run: |
         mkdir -p release_assets
-        if [ -f "dist/Digital-Cat_Windows.exe" ]; then
-          cp dist/Digital-Cat_Windows.exe release_assets/ 2>/dev/null || true
-        fi
-        if [ -f "dist/Digital-Cat_macOS" ]; then
-          cp dist/Digital-Cat_macOS release_assets/ 2>/dev/null || true
-        fi
-        if [ -f "dist/Digital-Cat_Linux" ]; then
-          cp dist/Digital-Cat_Linux release_assets/ 2>/dev/null || true
-        fi
-        find dist -name "Digital-Cat_*" -exec cp {} release_assets/ \; 2>/dev/null || true
+        cp dist/* release_assets/ || true
 
     - name: Пересоздать тег main
       shell: bash
