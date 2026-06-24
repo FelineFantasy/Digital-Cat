@@ -56,6 +56,8 @@ jobs:
     
     - name: Собираем бинарник с Nuitka
       shell: bash
+      env:
+        PATH: ${{ github.workspace }}/depends:${{ env.PATH }}
       run: |
         if [ "${{ matrix.os }}" = "windows-latest" ]; then
           python -m nuitka --standalone --onefile --windows-icon-from-ico=assets/cat.ico --output-dir=dist --output-filename=Digital-Cat_Windows.exe Digital-Cat.py
