@@ -50,7 +50,20 @@ jobs:
         unzip depends.zip -d depends
         echo "${{ github.workspace }}/depends" >> $GITHUB_PATH
     
-    - name: Устанавливаем зависимости
+    - name: Устанавливаем зависимости (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt update
+        sudo apt install -y patchelf
+        pip install nuitka
+    
+    - name: Устанавливаем зависимости (macOS)
+      if: runner.os == 'macOS'
+      run: |
+        pip install nuitka
+
+    - name: Устанавливаем зависимости (Windows)
+      if: runner.os == 'Windows'
       run: |
         pip install nuitka
     
