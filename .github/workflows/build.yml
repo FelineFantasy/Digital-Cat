@@ -68,21 +68,27 @@ jobs:
       run: |
         pip install nuitka
     
-    - name: Собираем бинарник с Nuitka
-      shell: bash
+    - name: Собираем бинарник с Nuitka (Windows)
+      if: runner.os == 'Windows'
       env:
         PATH: ${{ github.workspace }}/depends:${{ env.PATH }}
       run: |
-        if [ "${{ matrix.os }}" = "windows-latest" ]; then
-          python -m nuitka --standalone --onefile --windows-icon-from-ico=assets/cat.ico --output-dir=dist --output-filename=Digital-Cat_Windows.exe Digital-Cat.py
-          echo "ASSET_NAME=Digital-Cat_Windows.exe" >> $GITHUB_ENV
-        elif [ "${{ matrix.os }}" = "macos-latest" ]; then
-          python -m nuitka --standalone --onefile --macos-app-icon=assets/cat.icns --output-dir=dist --output-filename=Digital-Cat_macOS Digital-Cat.py
-          echo "ASSET_NAME=Digital-Cat_macOS" >> $GITHUB_ENV
-        else
-          python -m nuitka --standalone --onefile --output-dir=dist --output-filename=Digital-Cat_Linux Digital-Cat.py
-          echo "ASSET_NAME=Digital-Cat_Linux" >> $GITHUB_ENV
-        fi
+        python -m nuitka --standalone --onefile --windows-icon-from-ico=assets/cat.ico --output-dir=dist --output-filename=Digital-Cat_Windows.exe Digital-Cat.py
+        echo "ASSET_NAME=Digital-Cat_Windows.exe" >> $GITHUB_ENV
+
+    - name: Собираем бинарник с Nuitka (macOS)
+      if: runner.os == 'macOS'
+      env:
+        PATH: /usr/local/bin:${{ env.PATH }}
+      run: |
+        python -m nuitka --standalone --onefile --macos-app-icon=assets/cat.icns --output-dir=dist --output-filename=Digital-Cat_macOS Digital-Cat.py
+        echo "ASSET_NAME=Digital-Cat_macOS" >> $GITHUB_ENV
+
+    - name: Собираем бинарник с Nuitka (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        python -m nuitka --standalone --onefile --output-dir=dist --output-filename=Digital-Cat_Linux Digital-Cat.py
+        echo "ASSET_NAME=Digital-Cat_Linux" >> $GITHUB_ENV
 
     - name: Подготовить бинарник к релизу
       shell: bash
