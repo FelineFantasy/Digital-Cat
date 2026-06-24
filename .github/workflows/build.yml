@@ -75,7 +75,7 @@ jobs:
         git tag -d main || true
         git push origin :refs/tags/main || true
         git tag main
-        git push origin refs/tags/main
+        git push origin refs/tags/main --force
 
     - name: Загружаем результат в Релиз
       uses: softprops/action-gh-release@v2
