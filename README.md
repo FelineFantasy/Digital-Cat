@@ -111,3 +111,14 @@ Digital-Cat/
 - Added screen clear delay setting
 - Updated website for v3.0.0
 - Extracted constants: `VERSION`, `AUTHOR`, `LICENSE`
+
+### v2.0.0 (01.05.2026)
+- Added save/load system (`save.dat`)
+- Added veterinary clinic
+- Added shop with items
+
+### v1.0.0 (15.04.2026)
+- Initial release
+- Basic cat stats (satiety, happiness, energy, health)
+- Feed, pet, play, clean, sleep actions
+- Random events
