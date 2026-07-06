@@ -311,6 +311,8 @@ def show_menu():
 @log
 def action_feed(cat: CatState):
     """Действие: покормить кота."""
+    apply_clamp(cat)
+
     log_to_file(
         "DEBUG",
         f"До кормления: satiety={cat['satiety']}, money={cat['money']}, "
@@ -332,6 +334,7 @@ def action_feed(cat: CatState):
 
     cat["money"] -= 5
     cat["satiety"] += 10
+    apply_clamp(cat)
 
     print("=" * 50)
     print(f"{GREEN}Вы покормили кота {cat['name']}. -5 монет, +10 сытости.{RESET}")
@@ -339,6 +342,7 @@ def action_feed(cat: CatState):
 
     if random.random() < 0.1:
         cat["health"] -= 10
+        apply_clamp(cat)
         log_to_file(
             "WARNING",
             f"Кота стошнило! health-10, новое health={cat['health']}"
@@ -358,6 +362,8 @@ def action_feed(cat: CatState):
 @log
 def action_pet(cat: CatState):
     """Действие: погладить кота."""
+    apply_clamp(cat)
+
     log_to_file(
         "DEBUG",
         f"До поглаживания: happiness={cat['happiness']}, love={cat['love']}"
@@ -378,6 +384,7 @@ def action_pet(cat: CatState):
     else:
         cat["happiness"] += 1
         cat["love"] += 1
+        apply_clamp(cat)
         log_to_file(
             "DEBUG",
             f"После поглаживания: happiness={cat['happiness']}, "
@@ -395,6 +402,8 @@ def action_pet(cat: CatState):
 @log
 def action_play(cat: CatState):
     """Действие: поиграть с котом."""
+    apply_clamp(cat)
+
     log_to_file(
         "DEBUG",
         f"До игры: energy={cat['energy']}, happiness={cat['happiness']}"
@@ -415,6 +424,7 @@ def action_play(cat: CatState):
     else:
         cat["energy"] -= 5
         cat["happiness"] += 10
+        apply_clamp(cat)
         log_to_file(
             "DEBUG",
             f"После игры: energy={cat['energy']}, "
@@ -432,6 +442,8 @@ def action_play(cat: CatState):
 @log
 def action_clean(cat: CatState):
     """Действие: убрать лоток."""
+    apply_clamp(cat)
+
     log_to_file(
         "DEBUG",
         f"Уборка лотка: dirty_tray={cat['dirty_tray']}, love={cat['love']}, "
@@ -442,6 +454,7 @@ def action_clean(cat: CatState):
         cat["dirty_tray"] = False
         cat["love"] += 5
         cat["happiness"] += 5
+        apply_clamp(cat)
         log_to_file(
             "DEBUG",
             f"После уборки: dirty_tray={cat['dirty_tray']}, "
@@ -461,6 +474,8 @@ def action_clean(cat: CatState):
 @log
 def action_sleep(cat: CatState):
     """Действие: уложить кота спать."""
+    apply_clamp(cat)
+
     log_to_file(
         "DEBUG",
         f"До сна: energy={cat['energy']}, day_phase={cat['day_phase']}, "
@@ -479,6 +494,7 @@ def action_sleep(cat: CatState):
 
     if random.random() < 0.05:
         cat["happiness"] -= 10
+        apply_clamp(cat)
         log_to_file(
             "WARNING",
             f"Кот убежал! happiness-10, новое happiness={cat['happiness']}"
@@ -491,12 +507,14 @@ def action_sleep(cat: CatState):
     time.sleep(0.5)
 
     cat["energy"] += 25
+    cat["energy"] = clamp(cat["energy"])
     old_phase = cat["day_phase"]
     cat["day_phase"] = PHASES[old_phase]
 
     if cat["day_phase"] == "утро":
         cat["day"] += 1
         cat["love"] += 10
+    apply_clamp(cat)
 
     log_to_file(
         "DEBUG",
@@ -515,7 +533,6 @@ def action_sleep(cat: CatState):
 @log
 def action_shop(cat: CatState):
     """Действие: посетить магазин."""
-    # Приводим параметры в норму при входе в магазин
     apply_clamp(cat)
 
     log_to_file("DEBUG", f"Вход в магазин: money={cat['money']}")
@@ -526,6 +543,7 @@ def action_shop(cat: CatState):
             cat["money"] -= 15
             cat["happiness"] += 25
             cat["love"] += 10
+            apply_clamp(cat)
             log_to_file(
                 "DEBUG",
                 f"Куплена игрушка: money={cat['money']}, "
@@ -553,6 +571,7 @@ def action_shop(cat: CatState):
             cat["happiness"] += 10
             cat["satiety"] += 25
             cat["love"] += 10
+            apply_clamp(cat)
             log_to_file(
                 "DEBUG",
                 f"Куплены Dreamies: money={cat['money']}, "
@@ -586,6 +605,7 @@ def action_shop(cat: CatState):
             cat["satiety"] += 5
             cat["love"] += 20
             cat["health"] -= 5
+            apply_clamp(cat)
             log_to_file(
                 "DEBUG",
                 f"Куплена кошачья мята: money={cat['money']}, "
@@ -639,8 +659,6 @@ def action_shop(cat: CatState):
             log_to_file(
                 "DEBUG", f"Выход из магазина: money={cat['money']}"
             )
-            # Приводим параметры в норму перед выходом
-            apply_clamp(cat)
             wait_for_enter()
             clear_console()
             return
@@ -653,6 +671,8 @@ def action_shop(cat: CatState):
 @log
 def action_outside(cat: CatState):
     """Действие: выпустить кота на улицу."""
+    apply_clamp(cat)
+
     log_to_file(
         "DEBUG",
         f"До прогулки: satiety={cat['satiety']}, "
@@ -672,6 +692,7 @@ def action_outside(cat: CatState):
     cat["happiness"] += 25
     cat["love"] += 10
     cat["satiety"] -= 15
+    apply_clamp(cat)
 
     log_to_file(
         "DEBUG",
@@ -696,6 +717,8 @@ def action_outside(cat: CatState):
 @log
 def action_work(cat: CatState):
     """Действие: заработать монеты."""
+    apply_clamp(cat)
+
     log_to_file(
         "DEBUG",
         f"До работы: energy={cat['energy']}, money={cat['money']}, "
@@ -716,6 +739,7 @@ def action_work(cat: CatState):
     earned = random.randint(10, 25)
     cat["money"] += earned
     cat["happiness"] -= 5
+    apply_clamp(cat)
 
     log_to_file(
         "DEBUG",
@@ -739,7 +763,6 @@ def action_work(cat: CatState):
 @log
 def action_vet(cat: CatState):
     """Действие: посетить ветеринара."""
-    # Приводим параметры в норму при входе в клинику
     apply_clamp(cat)
 
     log_to_file(
@@ -753,6 +776,7 @@ def action_vet(cat: CatState):
             cat["money"] -= 30
             cat["health"] += 20
             cat["satiety"] += 5
+            apply_clamp(cat)
             log_to_file(
                 "DEBUG",
                 f"Куплены витамины: money={cat['money']}, "
@@ -779,6 +803,7 @@ def action_vet(cat: CatState):
         if cat["money"] >= 50:
             cat["money"] -= 50
             cat["health"] += 40
+            apply_clamp(cat)
             log_to_file(
                 "DEBUG",
                 f"Проведено лечение: money={cat['money']}, "
@@ -805,6 +830,7 @@ def action_vet(cat: CatState):
         if cat["money"] >= 80:
             cat["money"] -= 80
             cat["health"] = 100
+            apply_clamp(cat)
             log_to_file(
                 "DEBUG",
                 f"Экстренная помощь: money={cat['money']}, "
@@ -863,8 +889,6 @@ def action_vet(cat: CatState):
                 f"Выход из клиники: health={cat['health']}, "
                 f"money={cat['money']}"
             )
-            # Приводим параметры в норму перед выходом
-            apply_clamp(cat)
             wait_for_enter()
             clear_console()
             return
@@ -877,6 +901,8 @@ def action_vet(cat: CatState):
 @log
 def action_stats(cat: CatState):
     """Действие: показать статистику."""
+    apply_clamp(cat)
+
     log_to_file(
         "DEBUG",
         f"Показ статистики: день={cat['day']}, имя={cat['name']}, "
@@ -885,7 +911,7 @@ def action_stats(cat: CatState):
     print("=" * 50)
     print("Статистика кота")
     print("=" * 50)
-    print(f"Имя кота: {cat['name']}")
+    print(f"Имя: {cat['name']}")
     print(f"Сытость: {cat['satiety']}")
     print(f"Счастье: {cat['happiness']}")
     print(f"Энергия: {cat['energy']}")
@@ -896,17 +922,20 @@ def action_stats(cat: CatState):
         health_color = YELLOW
     else:
         health_color = RED
+
     print(f"Здоровье: {health_color}{cat['health']}{RESET}")
+    print(f"День: {cat['day']}")
+    print(f"Монеты: {cat['money']}")
+    print(f"Любовь: {cat['love']}")
 
     print(f"Кот жив: {'Да' if cat['is_alive'] else f'{RED}Нет{RESET}'}")
+
     if cat['dirty_tray']:
         print(f"{RED}Лоток грязный: Да{RESET}")
     else:
         print(f"{GREEN}Лоток грязный: Нет{RESET}")
+
     print(f"Фаза дня: {cat['day_phase']}")
-    print(f"Дней в игре: {cat['day']}")
-    print(f"Монет: {cat['money']}")
-    print(f"Любовь: {cat['love']}")
     wait_for_enter()
     clear_console()
 
@@ -915,6 +944,7 @@ def action_stats(cat: CatState):
 def action_settings(cat: CatState):
     """Действие: настройки игры."""
     global SCREEN_CLEAR_DELAY
+    apply_clamp(cat)
 
     log_to_file("DEBUG", "Вход в настройки")
     clear_console()
@@ -1134,7 +1164,7 @@ def main():
 
     try:
         while cat["is_alive"]:
-            apply_clamp(cat)  # ← Приводим всё в норму в начале цикла
+            apply_clamp(cat)
 
             if is_dead(cat):
                 print("=" * 50)
@@ -1171,7 +1201,7 @@ def main():
             print("\n" + "=" * 50)
             show_menu()
 
-            random_event(cat)  # ← События могут менять параметры
+            random_event(cat)
 
             user_choice = input("Выберите действие от 0 до 11: ").strip()
 
@@ -1193,8 +1223,7 @@ def main():
                 wait_and_clear()
                 continue
 
-            apply_clamp(cat)  # ← Приводим всё в норму перед проверкой смерти и сохранением
-
+            apply_clamp(cat)
             if is_dead(cat):
                 print("=" * 50)
                 print(f"{RED}{BOLD}Кот {cat['name']} умер...{RESET}")
