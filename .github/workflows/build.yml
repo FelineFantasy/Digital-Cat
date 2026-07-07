@@ -113,7 +113,7 @@ jobs:
       with:
         tag_name: main
         files: release_assets/*
-        name: "Digital Cat (main)"
-        body: "Самые свежие бинарники. Тег main пересоздается при каждом пуше."
+        name: "main"
+        body: "The latest automated binaries. The main tag is recreated on every push."
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
