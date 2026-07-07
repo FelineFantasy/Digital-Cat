@@ -12,11 +12,9 @@ import signal
 import sys
 import time
 import zlib
-import fcntl
 from functools import wraps
 from typing import TypedDict
 
-# Константы
 GREEN = '\033[92m'
 RED = '\033[91m'
 YELLOW = '\033[93m'
@@ -48,20 +46,36 @@ LOCK_FILE_PATH = None
 
 
 def acquire_lock():
-    """Создает блокировку для предотвращения запуска нескольких копий игры."""
     global LOCK_FILE, LOCK_FILE_PATH
-
-    lock_dir = os.path.join(os.path.expanduser("~"), ".digital_cat")
+    
+    if platform.system() == "Windows":
+        lock_dir = os.path.join(os.environ.get("APPDATA", os.path.expanduser("~")), "digital_cat")
+    else:
+        lock_dir = os.path.join(os.path.expanduser("~"), ".digital_cat")
+    
     os.makedirs(lock_dir, exist_ok=True)
-
     LOCK_FILE_PATH = os.path.join(lock_dir, "game.lock")
-
+    
     try:
-        LOCK_FILE = open(LOCK_FILE_PATH, 'w')
-        fcntl.flock(LOCK_FILE.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
-        LOCK_FILE.write(str(os.getpid()))
-        LOCK_FILE.flush()
-        return True
+        if platform.system() == "Windows":
+            import msvcrt
+            LOCK_FILE = open(LOCK_FILE_PATH, 'w+')
+            try:
+                msvcrt.locking(LOCK_FILE.fileno(), msvcrt.LK_NBLCK, 1)
+                LOCK_FILE.write(str(os.getpid()))
+                LOCK_FILE.flush()
+                return True
+            except (IOError, OSError):
+                LOCK_FILE.close()
+                LOCK_FILE = None
+                return False
+        else:
+            import fcntl
+            LOCK_FILE = open(LOCK_FILE_PATH, 'w')
+            fcntl.flock(LOCK_FILE.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+            LOCK_FILE.write(str(os.getpid()))
+            LOCK_FILE.flush()
+            return True
     except (IOError, OSError, BlockingIOError):
         if LOCK_FILE:
             LOCK_FILE.close()
@@ -70,14 +84,24 @@ def acquire_lock():
 
 
 def release_lock():
-    """Освобождает блокировку."""
     global LOCK_FILE, LOCK_FILE_PATH
     if LOCK_FILE:
         try:
-            fcntl.flock(LOCK_FILE.fileno(), fcntl.LOCK_UN)
+            if platform.system() == "Windows":
+                import msvcrt
+                try:
+                    msvcrt.locking(LOCK_FILE.fileno(), msvcrt.LK_UNLCK, 1)
+                except:
+                    pass
+            else:
+                import fcntl
+                fcntl.flock(LOCK_FILE.fileno(), fcntl.LOCK_UN)
             LOCK_FILE.close()
             if LOCK_FILE_PATH and os.path.exists(LOCK_FILE_PATH):
-                os.remove(LOCK_FILE_PATH)
+                try:
+                    os.remove(LOCK_FILE_PATH)
+                except:
+                    pass
         except Exception:
             pass
         finally:
@@ -86,7 +110,6 @@ def release_lock():
 
 
 def get_base_dir():
-    """Возвращает базовую директорию для сохранений."""
     if getattr(sys, 'frozen', False):
         return os.path.dirname(sys.executable)
     else:
@@ -94,14 +117,12 @@ def get_base_dir():
 
 
 def get_save_path():
-    """Возвращает путь к файлу сохранения."""
     base_dir = get_base_dir()
     os.makedirs(base_dir, exist_ok=True)
     return os.path.join(base_dir, "save.dat")
 
 
 def get_log_path():
-    """Возвращает путь к файлу логов с PID для изоляции."""
     base_dir = get_base_dir()
     os.makedirs(base_dir, exist_ok=True)
     pid = os.getpid()
@@ -113,7 +134,6 @@ LOG_FILE = get_log_path()
 
 
 def log_to_file(level: str, msg: str):
-    """Записывает сообщение в лог-файл."""
     global _LOG_BUFFER, _LOG_LAST_WRITE
     _LOG_BUFFER.append(f"[{level}] {time.strftime('%H:%M:%S')} {msg}\n")
     now = time.time()
@@ -128,7 +148,6 @@ def log_to_file(level: str, msg: str):
 
 
 def log(func):
-    """Декоратор для логирования функций."""
     @wraps(func)
     def wrapper(*args, **kwargs):
         start = time.perf_counter()
@@ -152,7 +171,6 @@ def log(func):
 
 
 class CatState(TypedDict):
-    """Тип состояния кота."""
     name: str
     satiety: int
     happiness: int
@@ -167,40 +185,33 @@ class CatState(TypedDict):
 
 
 def clear_console():
-    """Очищает консоль."""
     print(CLEAR_SCREEN, end="")
 
 
 def wait_and_clear():
-    """Ожидает и очищает консоль."""
     time.sleep(SCREEN_CLEAR_DELAY)
     clear_console()
 
 
 def wait_for_enter():
-    """Ожидает нажатия Enter."""
     input("\nНажмите Enter чтобы продолжить...")
 
 
 def clamp(value, min_val=0, max_val=100):
-    """Ограничивает значение в заданных пределах."""
     return max(min_val, min(value, max_val))
 
 
 def _obfuscate(data: bytes) -> bytes:
-    """Сжимает и кодирует данные в base64."""
     data = zlib.compress(data, level=9)
     return base64.b64encode(data)
 
 
 def _deobfuscate(data: bytes) -> bytes:
-    """Декодирует и распаковывает данные."""
     data = base64.b64decode(data)
     return zlib.decompress(data)
 
 
 def save_game(cat: CatState):
-    """Сохраняет игру в файл."""
     try:
         os.makedirs(os.path.dirname(SAVE_FILE), exist_ok=True)
         json_data = json.dumps(
@@ -219,7 +230,6 @@ def save_game(cat: CatState):
 
 
 def load_game() -> CatState | None:
-    """Загружает игру из файла."""
     if not os.path.exists(SAVE_FILE):
         log_to_file("DEBUG", f"Файл сохранения не найден: {SAVE_FILE}")
         return None
@@ -241,7 +251,6 @@ def load_game() -> CatState | None:
 
 
 def safe_choice(prompt: str, min_val: int, max_val: int) -> int:
-    """Безопасный ввод числа в заданном диапазоне."""
     while True:
         try:
             val = int(input(prompt).strip())
@@ -253,7 +262,6 @@ def safe_choice(prompt: str, min_val: int, max_val: int) -> int:
 
 
 def is_dead(cat: CatState) -> bool:
-    """Проверяет, жив ли кот."""
     log_to_file(
         "DEBUG",
         f"Проверка alive: health={cat['health']}, satiety={cat['satiety']}, "
@@ -274,7 +282,6 @@ def is_dead(cat: CatState) -> bool:
 
 
 def random_event(cat: CatState):
-    """Генерирует случайное событие."""
     if random.random() < 0.1:
         cat["satiety"] -= 3
         cat["happiness"] -= 1
@@ -315,7 +322,6 @@ def random_event(cat: CatState):
 
 
 def apply_clamp(cat: CatState):
-    """Применяет ограничения ко всем параметрам кота."""
     old_values = (
         cat["satiety"], cat["happiness"], cat["energy"],
         cat["health"], cat["love"], cat["money"]
@@ -335,7 +341,6 @@ def apply_clamp(cat: CatState):
 
 
 def show_menu():
-    """Отображает главное меню."""
     print(f"{LIGHTRED}0. Выйти из игры{RESET}")
     print(f"{GREEN}1. Покормить кота{RESET}")
     print(f"{GREEN}2. Погладить кота{RESET}")
@@ -353,7 +358,6 @@ def show_menu():
 
 @log
 def action_feed(cat: CatState):
-    """Действие: покормить кота."""
     apply_clamp(cat)
 
     log_to_file(
@@ -404,7 +408,6 @@ def action_feed(cat: CatState):
 
 @log
 def action_pet(cat: CatState):
-    """Действие: погладить кота."""
     apply_clamp(cat)
 
     log_to_file(
@@ -444,7 +447,6 @@ def action_pet(cat: CatState):
 
 @log
 def action_play(cat: CatState):
-    """Действие: поиграть с котом."""
     apply_clamp(cat)
 
     log_to_file(
@@ -484,7 +486,6 @@ def action_play(cat: CatState):
 
 @log
 def action_clean(cat: CatState):
-    """Действие: убрать лоток."""
     apply_clamp(cat)
 
     log_to_file(
@@ -516,7 +517,6 @@ def action_clean(cat: CatState):
 
 @log
 def action_sleep(cat: CatState):
-    """Действие: уложить кота спать."""
     apply_clamp(cat)
 
     log_to_file(
@@ -575,7 +575,6 @@ def action_sleep(cat: CatState):
 
 @log
 def action_shop(cat: CatState):
-    """Действие: посетить магазин."""
     apply_clamp(cat)
 
     log_to_file("DEBUG", f"Вход в магазин: money={cat['money']}")
@@ -713,7 +712,6 @@ def action_shop(cat: CatState):
 
 @log
 def action_outside(cat: CatState):
-    """Действие: выпустить кота на улицу."""
     apply_clamp(cat)
 
     log_to_file(
@@ -759,7 +757,6 @@ def action_outside(cat: CatState):
 
 @log
 def action_work(cat: CatState):
-    """Действие: заработать монеты."""
     apply_clamp(cat)
 
     log_to_file(
@@ -805,7 +802,6 @@ def action_work(cat: CatState):
 
 @log
 def action_vet(cat: CatState):
-    """Действие: посетить ветеринара."""
     apply_clamp(cat)
 
     log_to_file(
@@ -943,7 +939,6 @@ def action_vet(cat: CatState):
 
 @log
 def action_stats(cat: CatState):
-    """Действие: показать статистику."""
     apply_clamp(cat)
 
     log_to_file(
@@ -985,7 +980,6 @@ def action_stats(cat: CatState):
 
 @log
 def action_settings(cat: CatState):
-    """Действие: настройки игры."""
     global SCREEN_CLEAR_DELAY
     apply_clamp(cat)
 
@@ -1094,7 +1088,6 @@ def action_settings(cat: CatState):
 
 
 def get_os_greeting():
-    """Возвращает приветствие в зависимости от ОС."""
     system = platform.system()
 
     if system == "Windows":
@@ -1113,13 +1106,11 @@ def get_os_greeting():
 
 
 def show_welcome_screen():
-    """Показывает экран приветствия."""
     clear_console()
     print(get_os_greeting())
 
 
 def signal_handler(sig, frame):
-    """Обработчик сигнала прерывания."""
     log_to_file("INFO", "Игра прервана пользователем (Signal)")
     if 'cat' in frame.f_locals:
         save_game(frame.f_locals['cat'])
@@ -1130,9 +1121,8 @@ def signal_handler(sig, frame):
 
 
 def main():
-    """Основная функция игры."""
     signal.signal(signal.SIGINT, signal_handler)
-
+    
     if not acquire_lock():
         print(f"{RED}{BOLD}ОШИБКА: Игра уже запущена!{RESET}")
         print(f"{YELLOW}Нельзя запустить несколько копий игры одновременно.{RESET}")
