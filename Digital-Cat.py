@@ -12,6 +12,7 @@ import signal
 import sys
 import time
 import zlib
+import fcntl
 from functools import wraps
 from typing import TypedDict
 
@@ -42,6 +43,47 @@ PHASES = {
 _LOG_BUFFER = []
 _LOG_LAST_WRITE = 0
 
+LOCK_FILE = None
+LOCK_FILE_PATH = None
+
+
+def acquire_lock():
+    """Создает блокировку для предотвращения запуска нескольких копий игры."""
+    global LOCK_FILE, LOCK_FILE_PATH
+
+    lock_dir = os.path.join(os.path.expanduser("~"), ".digital_cat")
+    os.makedirs(lock_dir, exist_ok=True)
+
+    LOCK_FILE_PATH = os.path.join(lock_dir, "game.lock")
+
+    try:
+        LOCK_FILE = open(LOCK_FILE_PATH, 'w')
+        fcntl.flock(LOCK_FILE.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        LOCK_FILE.write(str(os.getpid()))
+        LOCK_FILE.flush()
+        return True
+    except (IOError, OSError, BlockingIOError):
+        if LOCK_FILE:
+            LOCK_FILE.close()
+            LOCK_FILE = None
+        return False
+
+
+def release_lock():
+    """Освобождает блокировку."""
+    global LOCK_FILE, LOCK_FILE_PATH
+    if LOCK_FILE:
+        try:
+            fcntl.flock(LOCK_FILE.fileno(), fcntl.LOCK_UN)
+            LOCK_FILE.close()
+            if LOCK_FILE_PATH and os.path.exists(LOCK_FILE_PATH):
+                os.remove(LOCK_FILE_PATH)
+        except Exception:
+            pass
+        finally:
+            LOCK_FILE = None
+            LOCK_FILE_PATH = None
+
 
 def get_base_dir():
     """Возвращает базовую директорию для сохранений."""
@@ -59,10 +101,11 @@ def get_save_path():
 
 
 def get_log_path():
-    """Возвращает путь к файлу логов."""
+    """Возвращает путь к файлу логов с PID для изоляции."""
     base_dir = get_base_dir()
     os.makedirs(base_dir, exist_ok=True)
-    return os.path.join(base_dir, "log.txt")
+    pid = os.getpid()
+    return os.path.join(base_dir, f"log_{pid}.txt")
 
 
 SAVE_FILE = get_save_path()
@@ -1080,6 +1123,7 @@ def signal_handler(sig, frame):
     log_to_file("INFO", "Игра прервана пользователем (Signal)")
     if 'cat' in frame.f_locals:
         save_game(frame.f_locals['cat'])
+    release_lock()
     print("\n" + "=" * 50)
     print("Прогресс сохранён. До встречи!")
     sys.exit(0)
@@ -1088,6 +1132,12 @@ def signal_handler(sig, frame):
 def main():
     """Основная функция игры."""
     signal.signal(signal.SIGINT, signal_handler)
+
+    if not acquire_lock():
+        print(f"{RED}{BOLD}ОШИБКА: Игра уже запущена!{RESET}")
+        print(f"{YELLOW}Нельзя запустить несколько копий игры одновременно.{RESET}")
+        print("Закройте другую копию и попробуйте снова.")
+        sys.exit(1)
 
     try:
         os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
@@ -1098,6 +1148,7 @@ def main():
 
     log_to_file("INFO", "=" * 50)
     log_to_file("INFO", "ИГРА ЗАПУЩЕНА")
+    log_to_file("INFO", f"PID: {os.getpid()}")
     log_to_file("INFO", f"Путь к сохранениям: {SAVE_FILE}")
     log_to_file("INFO", f"Путь к логам: {LOG_FILE}")
     log_to_file("INFO", "=" * 50)
@@ -1243,6 +1294,8 @@ def main():
         print("=" * 50)
         print("Прогресс сохранён. До встречи!")
         raise
+    finally:
+        release_lock()
 
     if os.path.exists(SAVE_FILE):
         os.remove(SAVE_FILE)
