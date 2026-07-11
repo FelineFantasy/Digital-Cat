@@ -3,10 +3,15 @@ name: 🐱 Digital Cat CI
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - 'Digital-Cat.py'
+      - '.github/workflows/*.yml'
     tags:
       - 'v[0-9]*'
   pull_request:
     branches: [ "main" ]
+    paths:
+      - 'Digital-Cat.py'
 
 jobs:
   syntax-check:
