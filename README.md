@@ -1,4 +1,4 @@
-# Digital Cat Game 🐱 v4.0.0
+# Digital Cat Game 🐱
 
 [![Python Version](https://img.shields.io/badge/python-3.10+-blue.svg)](https://python.org)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
@@ -88,37 +88,8 @@ Digital-Cat/
 └── log.txt          # Game log (auto-generated)
 ```
 
+---
+
 ## 👤 Author
 - **FelineFantasy**
 - **License**: MIT
-
----
-
-## 📦 Changelog
-
-### v4.0.0 (16.06.2026)
-- removed the bugs that were added
-- Improved game stability
-- Fixed rare bugs
-- Optimized code
-- The cat is glad
-
-### v3.0.0 (18.05.2026)
-- Added logging system (INFO/DEBUG/WARNING/ERROR)
-- Added settings menu
-- Added `@log` decorator for automatic function logging
-- Added before/after state logging for all actions
-- Added screen clear delay setting
-- Updated website for v3.0.0
-- Extracted constants: `VERSION`, `AUTHOR`, `LICENSE`
-
-### v2.0.0 (01.05.2026)
-- Added save/load system (`save.dat`)
-- Added veterinary clinic
-- Added shop with items
-
-### v1.0.0 (15.04.2026)
-- Initial release
-- Basic cat stats (satiety, happiness, energy, health)
-- Feed, pet, play, clean, sleep actions
-- Random events
