@@ -47,15 +47,18 @@ LOCK_FILE_PATH = None
 
 def acquire_lock():
     global LOCK_FILE, LOCK_FILE_PATH
-    
+
     if platform.system() == "Windows":
-        lock_dir = os.path.join(os.environ.get("APPDATA", os.path.expanduser("~")), "digital_cat")
+        lock_dir = os.path.join(
+            os.environ.get("APPDATA", os.path.expanduser("~")),
+            "digital_cat"
+        )
     else:
         lock_dir = os.path.join(os.path.expanduser("~"), ".digital_cat")
-    
+
     os.makedirs(lock_dir, exist_ok=True)
     LOCK_FILE_PATH = os.path.join(lock_dir, "game.lock")
-    
+
     try:
         if platform.system() == "Windows":
             import msvcrt
@@ -91,7 +94,7 @@ def release_lock():
                 import msvcrt
                 try:
                     msvcrt.locking(LOCK_FILE.fileno(), msvcrt.LK_UNLCK, 1)
-                except:
+                except Exception:
                     pass
             else:
                 import fcntl
@@ -100,7 +103,7 @@ def release_lock():
             if LOCK_FILE_PATH and os.path.exists(LOCK_FILE_PATH):
                 try:
                     os.remove(LOCK_FILE_PATH)
-                except:
+                except Exception:
                     pass
         except Exception:
             pass
@@ -1122,7 +1125,7 @@ def signal_handler(sig, frame):
 
 def main():
     signal.signal(signal.SIGINT, signal_handler)
-    
+
     if not acquire_lock():
         print(f"{RED}{BOLD}ОШИБКА: Игра уже запущена!{RESET}")
         print(f"{YELLOW}Нельзя запустить несколько копий игры одновременно.{RESET}")
