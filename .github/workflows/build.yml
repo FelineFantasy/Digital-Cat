@@ -22,11 +22,11 @@ jobs:
     steps:
     - name: Скачиваем код
       uses: actions/checkout@v4
-    - name: Устанавливаем Python 3.11 и настраиваем кэш pip
+    - name: Устанавливаем Python 3.11
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
-        cache: 'pip'
+
     - name: Проверяем, что Python-файл валидный
       shell: bash
       run: |
@@ -41,22 +41,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Устанавливаем Python и настраиваем кэш pip
+    - name: Устанавливаем Python 3.11
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
-        cache: 'pip'
-
-    - name: Настраиваем кэш компилятора для Nuitka
-      if: matrix.os != 'windows-latest'
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/.cache/Nuitka
-          ~/Library/Caches/Nuitka
-        key: ${{ runner.os }}-nuitka-${{ hashFiles('Digital-Cat.py') }}
-        restore-keys: |
-          ${{ runner.os }}-nuitka-
 
     - name: Устанавливаем зависимости (Linux)
       if: runner.os == 'Linux'
