@@ -22,10 +22,11 @@ jobs:
     steps:
     - name: Скачиваем код
       uses: actions/checkout@v4
-    - name: Устанавливаем Python 3.11
+    - name: Устанавливаем Python 3.11 и настраиваем кэш pip
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
+        cache: 'pip'
     - name: Проверяем, что Python-файл валидный
       shell: bash
       run: |
@@ -37,16 +38,25 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
-    permissions:
-      contents: write
-
     steps:
     - uses: actions/checkout@v4
 
-    - name: Устанавливаем Python
+    - name: Устанавливаем Python и настраиваем кэш pip
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
+        cache: 'pip'
+
+    - name: Настраиваем кэш компилятора для Nuitka
+      if: matrix.os != 'windows-latest'
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cache/Nuitka
+          ~/Library/Caches/Nuitka
+        key: ${{ runner.os }}-nuitka-${{ hashFiles('Digital-Cat.py') }}
+        restore-keys: |
+          ${{ runner.os }}-nuitka-
 
     - name: Устанавливаем зависимости (Linux)
       if: runner.os == 'Linux'
@@ -70,37 +80,46 @@ jobs:
       if: runner.os == 'Windows'
       run: |
         pyinstaller --onefile --icon=assets/cat.ico --name "Digital-Cat_Windows" Digital-Cat.py
-        echo "ASSET_NAME=Digital-Cat_Windows.exe" >> $GITHUB_ENV
-
-    - name: Устанавливаем file (macOS)
-      if: runner.os == 'macOS'
-      run: |
-        brew install file
-        echo "FILE_PATH=$(which file)" >> $GITHUB_ENV
-
-    - name: Проверяем file (macOS)
-      if: runner.os == 'macOS'
-      run: |
-        which file
-        file --version
 
     - name: Собираем бинарник с Nuitka (macOS)
       if: runner.os == 'macOS'
       run: |
         python -m nuitka --standalone --onefile --macos-app-icon=assets/cat.icns --macos-target-arch=arm64 --output-dir=dist --output-filename=Digital-Cat_macOS Digital-Cat.py
-        echo "ASSET_NAME=Digital-Cat_macOS" >> $GITHUB_ENV
 
     - name: Собираем бинарник с Nuitka (Linux)
       if: runner.os == 'Linux'
       run: |
         python -m nuitka --standalone --onefile --output-dir=dist --output-filename=Digital-Cat_Linux Digital-Cat.py
-        echo "ASSET_NAME=Digital-Cat_Linux" >> $GITHUB_ENV
 
-    - name: Подготовить бинарник к релизу
+    - name: Унифицируем пути сборки (перенос Windows exe в dist)
+      if: runner.os == 'Windows'
       shell: bash
       run: |
-        mkdir -p release_assets
-        cp dist/* release_assets/ || true
+        mkdir -p dist
+        cp dist/Digital-Cat_Windows.exe dist/ || cp dist/Digital-Cat_Windows/Digital-Cat_Windows.exe dist/ || true
+
+    - name: Временно сохраняем артефакт сборки
+      uses: actions/upload-artifact@v4
+      with:
+        name: binary-${{ matrix.os }}
+        path: dist/Digital-Cat_*
+        retention-days: 1
+
+  publish-release:
+    needs: build-exe
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    if: github.event_name == 'push'
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Скачиваем все собранные бинарники вместе
+      uses: actions/download-artifact@v4
+      with:
+        pattern: binary-*
+        path: release_assets
+        merge-multiple: true
 
     - name: Пересоздать тег main
       shell: bash
@@ -113,7 +132,7 @@ jobs:
         git tag main
         git push origin refs/tags/main --force
 
-    - name: Загружаем результат в Релиз
+    - name: Загружаем все три бинарника в Релиз
       uses: softprops/action-gh-release@v2
       with:
         tag_name: main
