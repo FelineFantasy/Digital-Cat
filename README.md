@@ -72,8 +72,9 @@ Main menu (options 0-11):
 ```text
 Digital-Cat/
 ├── .github/
-│   └── workflows/
-│       └── build.yml
+│   ├── workflows/
+│   │   └── build.yml
+│   └── FUNDING.yml
 ├── assets/
 │   ├── cat.icns
 │   ├── cat.ico
