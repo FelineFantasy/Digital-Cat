@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-"""
-Digital Cat - игра-симулятор кота.
-"""
-
 import base64
 import json
 import os
@@ -17,14 +13,19 @@ import zlib
 from functools import wraps
 from typing import TypedDict
 
-GREEN = '\033[92m'
-RED = '\033[91m'
-YELLOW = '\033[93m'
-CYAN = '\033[96m'
-MAGENTA = '\033[95m'
-RESET = '\033[0m'
-BOLD = '\033[1m'
-LIGHTRED = "\033[91m"
+USE_COLORS = not (platform.system() == "Windows" and float(platform.version().split('.')[0]) < 10)
+
+if USE_COLORS:
+    GREEN = '\033[92m'
+    RED = '\033[91m'
+    YELLOW = '\033[93m'
+    CYAN = '\033[96m'
+    MAGENTA = '\033[95m'
+    RESET = '\033[0m'
+    BOLD = '\033[1m'
+    LIGHTRED = "\033[91m"
+else:
+    GREEN = RED = YELLOW = CYAN = MAGENTA = RESET = BOLD = LIGHTRED = ""
 
 CLEAR_SCREEN = "\033[H\033[J"
 SCREEN_CLEAR_DELAY = 1.5
@@ -190,7 +191,13 @@ class CatState(TypedDict):
 
 
 def clear_console():
-    print(CLEAR_SCREEN, end="")
+    if platform.system() == "Windows":
+        if float(platform.version().split('.')[0]) >= 10:
+            print("\033[H\033[J", end="")
+        else:
+            os.system('cls')
+    else:
+        print("\033[H\033[J", end="")
 
 
 def wait_and_clear():
