@@ -93,13 +93,12 @@ Digital-Cat/
 
 If you enjoy **Digital Cat** and want to help keep the project alive, you can support me here:
 
-[![GitHub Sponsors](https://img.shields.io/badge/GitHub-Sponsors-pink.svg)](https://github.com/sponsors/FelineFantasy)
-[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-orange.svg)](https://www.buymeacoffee.com/FelineFantasy)
+[![DonationAlerts](https://img.shields.io/badge/DonationAlerts-Support-blue.svg)](https://www.donationalerts.com/r/FelineFantasy)
 
 Your support helps me:
 - 🐱 Keep developing new features
-- 🛠️ Fix bugs and improve performance
-- ☕ Stay caffeinated while coding at 4 AM
+- 🛠️ Fix bugs and improve the game
+- ☕ Stay awake while coding at 4 AM
 
 Every little bit is appreciated! ❤️
 
