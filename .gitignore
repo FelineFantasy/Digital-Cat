@@ -14,6 +14,7 @@ save.dat
 log.txt
 *.log
 *.dat
+log_*.txt
 
 # IDE Files
 .vscode/
