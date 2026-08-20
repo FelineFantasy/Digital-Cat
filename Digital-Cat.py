@@ -214,13 +214,11 @@ def clamp(value, min_val=0, max_val=100):
 
 
 def _obfuscate(data: bytes) -> bytes:
-    data = zlib.compress(data, level=9)
     return base64.b64encode(data)
 
 
 def _deobfuscate(data: bytes) -> bytes:
-    data = base64.b64decode(data)
-    return zlib.decompress(data)
+    return base64.b64decode(data)
 
 
 def save_game(cat: CatState):
