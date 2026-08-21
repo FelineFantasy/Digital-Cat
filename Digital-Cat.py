@@ -9,7 +9,6 @@ import random
 import signal
 import sys
 import time
-import zlib
 from functools import wraps
 from typing import TypedDict
 
