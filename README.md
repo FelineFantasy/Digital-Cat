@@ -47,7 +47,7 @@ Random events happen every day — the cat may find coins, use the litter box, o
 
 ### Option 2: Run from source (requires Python)
 ```bash
-git clone https://github.com/FelineFantasy/Digital-Cat.git
+git clone https://github.com/FelineFantasy/Digital-Cat
 cd Digital-Cat
 python Digital-Cat.py
 ```
