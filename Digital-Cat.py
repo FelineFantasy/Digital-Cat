@@ -329,14 +329,17 @@ def random_event(cat: CatState):
             print("=" * 50)
             log_to_file("DEBUG", "Событие: кот бегает по комнате")
         elif event == 5:
-            print(f"{CYAN}Кот {cat['name']} принёс вам подарок!{RESET}")
             gift = random.choice(["мышь", "листок", "камень", "перо"])
-            cat["money"] += random.randint(5, 15)
-            print(f"Он принёс {gift}! Вы продали это за монеты.")
+            gift_money = random.randint(5, 15)
+            cat["money"] += gift_money
+            print(f"{CYAN}Кот {cat['name']} принёс вам подарок!{RESET}")
+            print(f"Он принёс {gift}! Вы продали это за {gift_money} монет.")
+            log_to_file("DEBUG", f"Событие: кот принёс подарок ({gift}), монет +{gift_money}")
         elif event == 6:
-            print(f"{RED}Кот {cat['name']} разбил вазу!{RESET}")
             cat["happiness"] -= 10
             cat["love"] -= 5
+            print(f"{RED}Кот {cat['name']} разбил вазу!{RESET}")
+            log_to_file("WARNING", f"Событие: кот разбил вазу, счастье -10, любовь -5")
 
 
 def apply_clamp(cat: CatState):
