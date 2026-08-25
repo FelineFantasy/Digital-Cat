@@ -339,7 +339,7 @@ def random_event(cat: CatState):
             cat["happiness"] -= 10
             cat["love"] -= 5
             print(f"{RED}Кот {cat['name']} разбил вазу!{RESET}")
-            log_to_file("WARNING", f"Событие: кот разбил вазу, счастье -10, любовь -5")
+            log_to_file("INFO", f"Событие: кот разбил вазу, счастье -10, любовь -5")
 
 
 def apply_clamp(cat: CatState):
