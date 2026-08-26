@@ -306,7 +306,7 @@ def random_event(cat: CatState):
         log_to_file("DEBUG", "Грязный лоток: happiness-2, health-1")
 
     if random.random() < 0.15:
-        event = random.randint(1, 5)
+        event = random.randint(1, 6)
         if event == 1:
             print(f"{CYAN}Кот {cat['name']} мяукнул.{RESET}")
             print("=" * 50)
