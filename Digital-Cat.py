@@ -12,7 +12,7 @@ import time
 from functools import wraps
 from typing import TypedDict
 
-USE_COLORS = not (platform.system() == "Windows" and float(platform.version().split('.')[0]) < 10)
+USE_COLORS = not (platform.system() == "Windows" and platform.win32_ver()[0] < "10")
 
 if USE_COLORS:
     GREEN = '\033[92m'
