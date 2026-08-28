@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+
+"""
+Digital Cat - a virtual pet game with stats, shop, and day cycle.
+"""
+
 from __future__ import annotations
 
 import base64
