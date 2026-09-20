@@ -4,14 +4,14 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - 'Digital-Cat.py'
+      - 'src/main.py'
       - '.github/workflows/*.yml'
     tags:
       - 'v[0-9]*'
   pull_request:
     branches: [ "main" ]
     paths:
-      - 'Digital-Cat.py'
+      - 'src/main.py'
 
 jobs:
   syntax-check:
@@ -30,7 +30,7 @@ jobs:
     - name: Проверяем, что Python-файл валидный
       shell: bash
       run: |
-        python -m py_compile Digital-Cat.py && echo "OK: синтаксис корректен"
+        python -m py_compile src/main.py && echo "OK: синтаксис корректен"
 
   build-exe:
     needs: syntax-check
@@ -67,17 +67,17 @@ jobs:
     - name: Собираем бинарник (Windows)
       if: runner.os == 'Windows'
       run: |
-        pyinstaller --onefile --icon=assets/cat.ico --name "Digital-Cat_Windows" Digital-Cat.py
+        pyinstaller --onefile --icon=assets/cat.ico --name "Digital-Cat_Windows" src/main.py
 
     - name: Собираем бинарник с Nuitka (macOS)
       if: runner.os == 'macOS'
       run: |
-        python -m nuitka --standalone --onefile --macos-app-icon=assets/cat.icns --macos-target-arch=arm64 --output-dir=dist --output-filename=Digital-Cat_macOS Digital-Cat.py
+        python -m nuitka --standalone --onefile --macos-app-icon=assets/cat.icns --macos-target-arch=arm64 --output-dir=dist --output-filename=Digital-Cat_macOS src/main.py
 
     - name: Собираем бинарник с Nuitka (Linux)
       if: runner.os == 'Linux'
       run: |
-        python -m nuitka --standalone --onefile --output-dir=dist --output-filename=Digital-Cat_Linux Digital-Cat.py
+        python -m nuitka --standalone --onefile --output-dir=dist --output-filename=Digital-Cat_Linux src/main.py
 
     - name: Унифицируем пути сборки (перенос Windows exe в dist)
       if: runner.os == 'Windows'
