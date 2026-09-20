@@ -49,7 +49,7 @@ Random events happen every day — the cat may find coins, use the litter box, o
 ```bash
 git clone https://github.com/FelineFantasy/Digital-Cat
 cd Digital-Cat
-python Digital-Cat.py
+python src/main.py
 ```
 
 ## 🎮 Controls
@@ -79,8 +79,9 @@ Digital-Cat/
 │   ├── cat.icns
 │   ├── cat.ico
 │   └── cat.png
+├── src/
+│   └── main.py      # Game entry point
 ├── .gitignore
-├── Digital-Cat.py   # Game
 ├── LICENSE
 ├── README.md        # Documentation
 ├── index.html       # Website
