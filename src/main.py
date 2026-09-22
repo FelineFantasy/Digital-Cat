@@ -149,7 +149,7 @@ def log_to_file(level: str, msg: str):
     now = time.time()
     if len(_LOG_BUFFER) >= 10 or now - _LOG_LAST_WRITE >= 60 or level == "ERROR":
         try:
-            with open(LOG_FILE, "a", encoding="utf-8") as f:
+            with open(LOG_FILE, "a", encoding="utf-8", errors="replace") as f:
                 f.write("".join(_LOG_BUFFER))
             _LOG_BUFFER = []
             _LOG_LAST_WRITE = now
