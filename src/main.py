@@ -1006,7 +1006,6 @@ def action_stats(cat: CatState):
 
 @log
 def action_settings(cat: CatState):
-    global SCREEN_CLEAR_DELAY
     apply_clamp(cat)
 
     log_to_file("DEBUG", "Вход в настройки")
