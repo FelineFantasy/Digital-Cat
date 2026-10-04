@@ -1295,24 +1295,23 @@ def main():
                 time.sleep(2)
                 break
 
-            if cat["day"] >= 100:
+            if cat["day"] >= 100 and not cat.get("_100_days_shown", False):
                 clear_console()
                 print("=" * 50)
-                print(f"{GREEN}{BOLD}ПОЗДРАВЛЯЮ! ТЫ ПРОШЁЛ ИГРУ!{RESET}")
+                print(f"{GREEN}{BOLD}ПОЗДРАВЛЯЮ! ТЫ ПРОШЁЛ 100 ДНЕЙ!{RESET}")
                 print("=" * 50)
-                print(f"{CYAN}ФИНАЛЬНАЯ СТАТИСТИКА{RESET}")
+                print(f"{CYAN}СТАТИСТИКА НА 100-Й ДЕНЬ{RESET}")
                 print("=" * 50)
                 action_stats(cat)
                 print("=" * 50)
                 print(f"{GREEN}{BOLD}Спасибо, что заботился о {cat['name']}!{RESET}")
-                print(f"{YELLOW}Кот навсегда в твоём сердце.{RESET}")
+                print(f"{YELLOW}Но игра продолжается — впереди ещё много дней!{RESET}")
                 log_to_file(
                     "INFO",
-                    f"ИГРА ПРОЙДЕНА! День {cat['day']}, имя {cat['name']}"
+                    f"ДОСТИГНУТ 100-Й ДЕНЬ! День {cat['day']}, имя {cat['name']}"
                 )
-                cat["is_alive"] = False
+                cat["_100_days_shown"] = True
                 save_game(cat)
-                game_over = True
                 time.sleep(3)
                 break
 
