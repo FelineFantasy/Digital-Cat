@@ -1237,6 +1237,8 @@ def main():
         "11": action_settings,
     }
 
+    game_over = False
+
     try:
         while cat["is_alive"]:
             apply_clamp(cat)
@@ -1269,6 +1271,7 @@ def main():
                 )
                 cat["is_alive"] = False
                 save_game(cat)
+                game_over = True
                 time.sleep(3)
                 break
 
@@ -1307,6 +1310,7 @@ def main():
                     "WARNING",
                     f"ИГРА ОКОНЧЕНА: кот умер на {cat['day']} дне"
                 )
+                game_over = True
                 time.sleep(2)
                 break
 
@@ -1320,6 +1324,22 @@ def main():
         raise
     finally:
         release_lock()
+
+    if game_over and os.path.exists(SAVE_FILE):
+        os.remove(SAVE_FILE)
+        log_to_file(
+            "INFO",
+            f"Файл сохранения удалён (игра окончена): {SAVE_FILE}"
+        )
+    elif os.path.exists(SAVE_FILE):
+        log_to_file(
+            "INFO",
+            f"Файл сохранения оставлен: {SAVE_FILE}"
+        )
+
+    print("Игра окончена!")
+    log_to_file("INFO", "ИГРА ОКОНЧЕНА (полностью)")
+    log_to_file("INFO", "=" * 50)
 
     if os.path.exists(SAVE_FILE):
         os.remove(SAVE_FILE)
