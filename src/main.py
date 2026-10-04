@@ -1325,32 +1325,22 @@ def main():
     finally:
         release_lock()
 
-    if game_over and os.path.exists(SAVE_FILE):
-        os.remove(SAVE_FILE)
-        log_to_file(
-            "INFO",
-            f"Файл сохранения удалён (игра окончена): {SAVE_FILE}"
-        )
-    elif os.path.exists(SAVE_FILE):
-        log_to_file(
-            "INFO",
-            f"Файл сохранения оставлен: {SAVE_FILE}"
-        )
-
-    print("Игра окончена!")
-    log_to_file("INFO", "ИГРА ОКОНЧЕНА (полностью)")
-    log_to_file("INFO", "=" * 50)
-
-    if os.path.exists(SAVE_FILE):
-        os.remove(SAVE_FILE)
-        log_to_file(
-            "INFO",
-            f"Файл сохранения удалён при завершении игры: {SAVE_FILE}"
-        )
-
-    print("Игра окончена!")
-    log_to_file("INFO", "ИГРА ОКОНЧЕНА (полностью)")
-    log_to_file("INFO", "=" * 50)
+    if game_over:
+        if os.path.exists(SAVE_FILE):
+            try:
+                os.remove(SAVE_FILE)
+                log_to_file(
+                    "INFO",
+                    f"Файл сохранения удалён (игра окончена): {SAVE_FILE}"
+                )
+            except OSError as e:
+                log_to_file(
+                    "ERROR",
+                    f"Не удалось удалить сохранение: {e}"
+                )
+        print("Игра окончена!")
+        log_to_file("INFO", "ИГРА ОКОНЧЕНА (полностью)")
+        log_to_file("INFO", "=" * 50)
 
 
 if __name__ == "__main__":
