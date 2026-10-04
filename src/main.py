@@ -34,6 +34,10 @@ else:
 CLEAR_SCREEN = "\033[H\033[J"
 SCREEN_CLEAR_DELAY = 1.5
 
+DEFAULT_SCREEN_CLEAR_DELAY = 1.5
+MIN_SCREEN_CLEAR_DELAY = 0.5
+MAX_SCREEN_CLEAR_DELAY = 5.0
+
 VERSION = "v4.0.0"
 AUTHOR = "Тимур (FelineFantasy)"
 LICENSE = "MIT"
@@ -192,6 +196,7 @@ class CatState(TypedDict):
     is_alive: bool
     dirty_tray: bool
     day_phase: str
+    screen_clear_delay: float
 
 
 def clear_console():
@@ -252,6 +257,7 @@ def load_game() -> CatState | None:
             obfuscated = f.read()
         json_data = _deobfuscate(obfuscated)
         cat = json.loads(json_data.decode('utf-8'))
+        cat.setdefault("screen_clear_delay", DEFAULT_SCREEN_CLEAR_DELAY)
         log_to_file(
             "DEBUG",
             f"Игра загружена: день={cat['day']}, имя={cat['name']}, "
@@ -1000,6 +1006,7 @@ def action_stats(cat: CatState):
         print(f"{GREEN}Лоток грязный: Нет{RESET}")
 
     print(f"Фаза дня: {cat['day_phase']}")
+    print(f"Задержка очистки экрана: {cat.get('screen_clear_delay', DEFAULT_SCREEN_CLEAR_DELAY)} сек.")
     wait_for_enter()
     clear_console()
 
@@ -1061,20 +1068,29 @@ def action_settings(cat: CatState):
         print(f"Текущая задержка: {SCREEN_CLEAR_DELAY} сек.")
         try:
             new_delay = float(
-                input("Введите новую задержку (0.5 - 5.0): ")
+                input(
+                    f"Введите новую задержку "
+                    f"({MIN_SCREEN_CLEAR_DELAY} - {MAX_SCREEN_CLEAR_DELAY}): "
+                )
             )
-            if 0.5 <= new_delay <= 5.0:
+            if MIN_SCREEN_CLEAR_DELAY <= new_delay <= MAX_SCREEN_CLEAR_DELAY:
                 log_to_file(
                     "INFO",
                     f"Задержка очистки экрана изменена с "
                     f"{SCREEN_CLEAR_DELAY} на {new_delay}"
                 )
                 SCREEN_CLEAR_DELAY = new_delay
+                cat["screen_clear_delay"] = new_delay
+                save_game(cat)
                 print(
-                    f"Задержка изменена на {SCREEN_CLEAR_DELAY} сек."
+                    f"Задержка изменена на {SCREEN_CLEAR_DELAY} сек. "
+                    f"и сохранена в конфиг."
                 )
             else:
-                print("Ошибка! Введите число от 0.5 до 5.0")
+                print(
+                    f"Ошибка! Введите число от "
+                    f"{MIN_SCREEN_CLEAR_DELAY} до {MAX_SCREEN_CLEAR_DELAY}"
+                )
         except ValueError:
             print("Ошибка! Это не число.")
         wait_for_enter()
@@ -1155,6 +1171,8 @@ def signal_handler(sig, frame):
 
 
 def main():
+    global SCREEN_CLEAR_DELAY
+
     signal.signal(signal.SIGINT, signal_handler)
 
     if not acquire_lock():
@@ -1189,6 +1207,7 @@ def main():
         "is_alive": True,
         "dirty_tray": False,
         "day_phase": "день",
+        "screen_clear_delay": DEFAULT_SCREEN_CLEAR_DELAY,
     }
 
     show_welcome_screen()
@@ -1221,6 +1240,10 @@ def main():
         cat["name"] = input("Для начала придумай имя своему питомцу: ").strip()
         log_to_file("INFO", f"Создан новый кот с именем: {cat['name']}")
         clear_console()
+
+    SCREEN_CLEAR_DELAY = float(
+        cat.get("screen_clear_delay", DEFAULT_SCREEN_CLEAR_DELAY)
+    )
 
     main_actions = {
         "0": lambda: None,
