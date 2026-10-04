@@ -1222,7 +1222,7 @@ def main():
         "love": 50,
         "is_alive": True,
         "dirty_tray": False,
-        "day_phase": "день",
+        "day_phase": "утро",
         "screen_clear_delay": DEFAULT_SCREEN_CLEAR_DELAY,
     }
 
