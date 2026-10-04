@@ -55,6 +55,9 @@ _LOG_LAST_WRITE = 0
 LOCK_FILE = None
 LOCK_FILE_PATH = None
 
+_CURRENT_CAT = None
+_SHUTDOWN_REQUESTED = False
+
 
 def acquire_lock():
     global LOCK_FILE, LOCK_FILE_PATH
@@ -1161,17 +1164,30 @@ def show_welcome_screen():
 
 
 def signal_handler(sig, frame):
+    global _SHUTDOWN_REQUESTED
+
+    if _SHUTDOWN_REQUESTED:
+        os._exit(1)
+    _SHUTDOWN_REQUESTED = True
+
     log_to_file("INFO", "Игра прервана пользователем (Signal)")
-    if 'cat' in frame.f_locals:
-        save_game(frame.f_locals['cat'])
+
+    if _CURRENT_CAT is not None:
+        try:
+            save_game(_CURRENT_CAT)
+        except Exception as e:
+            log_to_file("ERROR", f"Не удалось сохранить при выходе: {e}")
+
     release_lock()
-    print("\n" + "=" * 50)
-    print("Прогресс сохранён. До встречи!")
-    sys.exit(0)
+
+    print("\n" + "=" * 50, file=sys.stderr)
+    print("Прогресс сохранён. До встречи!", file=sys.stderr)
+
+    raise KeyboardInterrupt
 
 
 def main():
-    global SCREEN_CLEAR_DELAY
+    global SCREEN_CLEAR_DELAY, _CURRENT_CAT
 
     signal.signal(signal.SIGINT, signal_handler)
 
@@ -1240,6 +1256,8 @@ def main():
         cat["name"] = input("Для начала придумай имя своему питомцу: ").strip()
         log_to_file("INFO", f"Создан новый кот с именем: {cat['name']}")
         clear_console()
+
+    _CURRENT_CAT = cat
 
     SCREEN_CLEAR_DELAY = float(
         cat.get("screen_clear_delay", DEFAULT_SCREEN_CLEAR_DELAY)
@@ -1339,6 +1357,12 @@ def main():
 
             save_game(cat)
 
+    except KeyboardInterrupt:
+        save_game(cat)
+        log_to_file("INFO", "Игра прервана пользователем (KeyboardInterrupt)")
+        print("=" * 50)
+        print("Прогресс сохранён. До встречи!")
+        return
     except Exception:
         save_game(cat)
         log_to_file("ERROR", "Игра прервана из-за ошибки")
@@ -1346,6 +1370,7 @@ def main():
         print("Прогресс сохранён. До встречи!")
         raise
     finally:
+        _CURRENT_CAT = None
         release_lock()
 
     if game_over:
