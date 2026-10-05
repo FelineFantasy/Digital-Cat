@@ -80,14 +80,14 @@ Digital-Cat/
 │   ├── cat.ico
 │   └── cat.png
 ├── src/
-│   └── main.py      # Game entry point
+│   ├── main.py        # Game entry point
+│   ├── log.txt        # Game log (auto-generated)
+│   └── save.dat       # Save file (auto-generated)
 ├── .gitignore
 ├── LICENSE
-├── README.md        # Documentation
-├── index.html       # Website
-├── style.css        # Website styles
-├── save.dat         # Save file (auto-generated)
-└── log.txt          # Game log (auto-generated)
+├── README.md          # Documentation
+├── index.html         # Website
+└── style.css          # Website styles
 ```
 
 ## 💖 Support the Project
